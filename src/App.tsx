@@ -117,7 +117,7 @@ const Wrapper = styled.div`
   position: relative;
   width: 100%;
   height: 100vh;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: white;
   backdrop-filter: blur(5px);
   z-index: 1;
 
