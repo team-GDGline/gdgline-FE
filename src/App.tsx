@@ -1,4 +1,4 @@
-import { Routes } from "./routes";
+import { Routes } from "./routes/Routes";
 import { ChakraProvider } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
@@ -19,16 +19,16 @@ const bubbleRise = keyframes`
 `;
 
 // Bubble 타입 정의
-interface BubbleType {
+type BubbleType = {
   id: number;
   left: number;
   bottom: number;
   size: number;
   duration: number;
   delay: number;
-}
+};
 
-const App: React.FC = () => {
+const App = () => {
   const [bubbles, setBubbles] = useState<BubbleType[]>([]);
 
   useEffect(() => {
@@ -128,3 +128,6 @@ const Wrapper = styled.div`
 `;
 
 export default App;
+
+// 한 페이지에 해당하는 api, hooks, components, types .. 들은 한 폴더에 모아두기
+// index.tsx 사용금지. 명확하게 이름 정하기
