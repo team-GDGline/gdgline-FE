@@ -1,36 +1,127 @@
 import { Routes } from "./routes";
 import { ChakraProvider } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import { keyframes } from "@emotion/react";
+import { useEffect, useState } from "react";
 
-const App = () => {
+// 애니메이션 정의
+const bubbleRise = keyframes`
+  0% {
+    transform: translateY(0) translateX(0) scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-120vh) translateX(${
+      Math.random() * 50 - 25
+    }px) scale(1.2);
+    opacity: 0;
+  }
+`;
+
+// Bubble 타입 정의
+interface BubbleType {
+  id: number;
+  left: number;
+  bottom: number;
+  size: number;
+  duration: number;
+  delay: number;
+}
+
+const App: React.FC = () => {
+  const [bubbles, setBubbles] = useState<BubbleType[]>([]);
+
+  useEffect(() => {
+    // 초기 물방울 생성
+    const initialBubbles = Array.from({ length: 15 }, () => ({
+      id: Math.random(),
+      left: Math.random() * 100,
+      bottom: -(Math.random() * 100),
+      size: Math.random() * 15 + 10,
+      duration: Math.random() * 5 + 10,
+      delay: Math.random() * -15,
+    }));
+    setBubbles(initialBubbles);
+
+    // 주기적으로 새로운 물방울 추가
+    const interval = setInterval(() => {
+      const newBubble = {
+        id: Math.random(),
+        left: Math.random() * 100,
+        bottom: -10,
+        size: Math.random() * 15 + 10,
+        duration: Math.random() * 5 + 10,
+        delay: 0,
+      };
+      setBubbles((prev) => [...prev.slice(-14), newBubble]);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <>
-      <ChakraProvider>
-        <PageContainer>
-          <Wrapper>
-            <Routes />
-          </Wrapper>
-        </PageContainer>
-      </ChakraProvider>
-    </>
+    <ChakraProvider>
+      <PageContainer>
+        <BubbleContainer>
+          {bubbles.map((bubble) => (
+            <Bubble
+              key={bubble.id}
+              style={{
+                left: `${bubble.left}%`,
+                bottom: `${bubble.bottom}%`,
+                width: `${bubble.size}px`,
+                height: `${bubble.size}px`,
+                animationDuration: `${bubble.duration}s`,
+                animationDelay: `${bubble.delay}s`,
+              }}
+            />
+          ))}
+        </BubbleContainer>
+        <Wrapper>
+          <Routes />
+        </Wrapper>
+      </PageContainer>
+    </ChakraProvider>
   );
 };
 
-// 페이지 전체를 감싸는 컨테이너
+// 스타일드 컴포넌트
 const PageContainer = styled.div`
-  background-color: #d9d9d9; /* 바깥 배경색 변경 */
+  position: relative;
   width: 100%;
-  min-height: 100vh; /* 화면 전체를 채우도록 설정 */
+  min-height: 100vh;
+  background: linear-gradient(180deg, #006994 0%, #1e4d6b 50%, #0a2a43 100%);
+  overflow: hidden;
 `;
 
-// 가운데 정렬된 콘텐츠를 위한 래퍼
+const BubbleContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+`;
+
+const Bubble = styled.div`
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.2)
+  );
+  animation: ${bubbleRise} linear forwards;
+  pointer-events: none;
+`;
+
 const Wrapper = styled.div`
-  width: 100%; /* 모바일에서는 전체 너비 사용 */
-  height: 100vh; /* 높이를 100%로 설정 */
-  background-color: white; /* 콘텐츠 내부의 배경색 */
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  z-index: 1;
 
   @media (min-width: 768px) {
-    /* 태블릿 이상에서는 중앙에 고정 */
     max-width: 600px;
     margin: 0 auto;
   }
