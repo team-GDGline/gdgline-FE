@@ -8,28 +8,9 @@ import {
   Card,
   CardBody,
 } from "@chakra-ui/react";
+import { MARIN_LIFE } from "./data/marin-life";
 
 const BookPage = () => {
-  const marineLife = [
-    "뱅가이카디널",
-    "보라양쥐돔",
-    "돛지느러미양쥐돔",
-    "긴코초록놀래기",
-    "할리퀸터스크",
-    "그린크로미스",
-    "줄셋돔",
-    "금강바리",
-    "초코칩불가사리",
-    "두동가리돔",
-    "청줄돌돔",
-    "샛별돔",
-    "파랑돔",
-    "큰양놀래기",
-    "아라비아청줄돔",
-    "붉은이빨쥐치",
-    // ... 나머지 생물들
-  ];
-
   const totalCards = 117;
   const discoveredCards = 7;
 
@@ -80,7 +61,7 @@ const BookPage = () => {
       >
         <Container maxW="container.xl" pb={8}>
           <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={3} mx="auto">
-            {marineLife.map((fish, index) => (
+            {MARIN_LIFE.map((fish, index) => (
               <Card
                 key={index}
                 bg="gray.100"
