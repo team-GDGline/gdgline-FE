@@ -17,7 +17,7 @@ const NextButton: React.FC<NextButtonProps> = ({children}) => {
             borderRadius="10px"
             _hover={{bg: "#C5EFFF"}}
             position="absolute"
-            bottom="100px"
+            bottom="120px"
             boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)" // 옅은 그림자
         >
             {children}
