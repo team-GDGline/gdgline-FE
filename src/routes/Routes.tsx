@@ -5,6 +5,7 @@ import BookPage from "../pages/Book/BookPage"; // 도감 컴포넌트 가져오�
 import LoadingPage from "../pages/LoadingPage/LoadingPage"; // 로딩 페이지 컴포넌트 가져오기/ 메인 페이지 컴포넌트 가져오기
 import AnalysisPage from "../pages/Analysis/AnalysisPage";
 import NotFoundPage from "../pages/NotFound/NotFoundPage";
+import CameraPage from "../pages/Camera/CameraPage";
 import { RouterPath } from "./path"; // 경로 상수 가져오기
 
 // 라우터 정의
@@ -33,6 +34,10 @@ const router = createBrowserRouter(
     {
       path: RouterPath.notFound,
       element: <NotFoundPage />,
+    },
+    {
+      path: RouterPath.camera,
+      element: <CameraPage />,
     },
   ],
   {

@@ -6,4 +6,5 @@ export const RouterPath = {
   loading: "/loading",
   analysis: "/analysis",
   notFound: "/notFound",
+  camera: "/camera",
 };

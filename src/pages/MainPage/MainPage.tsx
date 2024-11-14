@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Flex, Text, keyframes, Box,
   Menu, MenuButton, MenuList, MenuItem, Image,
@@ -16,6 +16,11 @@ import bottomLayout_blue from "../../assets/bottomLayout_blue.png";
 
 const MainPage: React.FC = () => {
   const [nickname, setNickname] = useState('고희연')
+  const navigate = useNavigate();
+  const goCamera = () =>
+  {
+    navigate("/camera")
+  };
   return (
     <Wrapper>
       <Flex width="100%" justifyContent="flex-end" p={1}>
@@ -49,7 +54,7 @@ const MainPage: React.FC = () => {
       <Text mt="20px" fontSize='1xl' color="#666666" >물고기를 모아 나만의 아쿠아리움을 완성하세요</Text>
       <Aquarium></Aquarium>
       <BottomLayout>
-      <Button mt='10px' mb="10px" borderRadius="50%"  bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow={"0px 4px 8px rgba(0, 0, 0, 0.2)"} >
+      <Button onClick={goCamera} mt='10px' mb="10px" borderRadius="50%"  bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow={"0px 4px 8px rgba(0, 0, 0, 0.2)"} >
       <CameraIcon size="40"/>
       </Button>
     <GoBook to="/book">
