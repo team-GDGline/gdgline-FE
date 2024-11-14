@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainPage from "../pages/MainPage/MainPage"; // 메인 페이지 컴포넌트 가져오기
 import StartPage from "../pages/Start/StartPage";
-import BookPage from "../pages/Book/BookPage"; // 도감 컴포넌트 가져오기
+import BookPage from "../pages/Book/BookPage";
 import LoadingPage from "../pages/LoadingPage/LoadingPage"; // 로딩 페이지 컴포넌트 가져오기/ 메인 페이지 컴포넌트 가져오기
 import AnalysisPage from "../pages/Analysis/AnalysisPage";
 import NotFoundPage from "../pages/NotFound/NotFoundPage";
@@ -14,7 +14,7 @@ const router = createBrowserRouter(
       path: RouterPath.root,
       element: <StartPage />,
     },
-    { 
+    {
       path: RouterPath.main,
       element: <MainPage />,
     },
