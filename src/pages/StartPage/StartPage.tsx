@@ -7,11 +7,23 @@ import backgroundFish1 from "../../assets/background_fish1.svg";
 import backgroundFish2 from "../../assets/background_fish2.svg";
 import start_img from "../../assets/start_img.svg";
 import NextButton from "../../components/NextButton.tsx";
-
+import { useNavigate } from "react-router-dom";
 
 const StartPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleStartClick = () => {
+    const waveElement = document.getElementById("waveEffect");
+    if (waveElement) {
+      waveElement.classList.add("bubble-transition"); // 물방울 애니메이션 클래스 추가
+      setTimeout(() => {
+        navigate("/"); // 페이지 이동
+      }, 1000); // 애니메이션 지속 시간 후 페이지 이동
+    }
+  };
+  
   return (
-    <Wrapper>
+    <Wrapper id="waveEffect">
             {/* backgroundFish1 */}
          <Box
         as="img"
@@ -40,7 +52,8 @@ const StartPage: React.FC = () => {
       <Text fontSize='5xl' color="#152972" >멍</Text>
   </Flex>
       <AnimatedFish src={start_img} alt="fish" />
-      <NextButton>시작하기</NextButton>
+      <NextButton onClick={handleStartClick}>시작하기</NextButton>
+      {/* 나중에는 Login화면으로 가야 함 일단은 MainPage로 가도록 설정 */}
       </Wrapper>
   );
 };
@@ -60,12 +73,40 @@ const Wrapper = styled.div`
     flex-direction: column;
     align-items: center;
 
+
+  // 물방울 애니메이션 클래스
+  &.bubble-transition {
+    animation: bubble 1s ease-in-out forwards;
+  }
+
+  @keyframes bubble {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.3);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
 `;
 
 
 const swimAnimation = keyframes`
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
+`;
+
+// 물결 애니메이션 정의
+const waveAnimation = keyframes`
+  0% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.1) translateY(-5px); }
+  100% { transform: scale(1) translateY(0); }
 `;
 
 // 위아래로 움직이는 애니메이션 정의
@@ -87,4 +128,5 @@ const AnimatedFish = styled.img`
     }
   }
 `;
+
 
