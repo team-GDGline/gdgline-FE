@@ -2,7 +2,7 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./styles/theme";
 import { BubbleContainer } from "./components/Bubble/BubbleContainer";
-import { Bubble } from "./components/Bubble/bubble";
+import { Bubble } from "./components/Bubble/Bubble";
 import { Wrapper } from "./components/Wrapper";
 import { Routes } from "./routes/Routes";
 import { useBubbles } from "./components/Bubble/useBubbles";
