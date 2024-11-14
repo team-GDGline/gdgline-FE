@@ -19,21 +19,22 @@ import leatherbackSeaTurtle from "../../../assets/pixel/leatherbackSeaTurtle.svg
 import humboldtPenguin from "../../../assets/pixel/humboldtPenguin.svg";
 
 // 이미지 배열 생성
+// 이미지와 위치 정보를 포함한 객체 배열
 const fishPixel = [
-  gardenEel, 
-  napoleonWrasse,
-  arowana,
-  blacktipReefShark,
-  africanManatee,
-  giantGrouper,
-  smallClawedOtter,
-  piranha,
-  zebraShark,
-  californiaSeaLion,
-  clownfish,
-  blackStingray,
-  leatherbackSeaTurtle,
-  humboldtPenguin
+  { src: gardenEel, top: "75%", left: "10%", width:"80px", height: "80px" },
+  { src: napoleonWrasse, top: "45%", left: "80%", width:"60px", height: "60px" },
+  { src: arowana, top: "40%", left: "5%", width:"60px", height: "60px" },
+  { src: blacktipReefShark, top: "5%", left: "60%", width:"140px", height: "140px" },
+  { src: africanManatee, top: "45%", left: "30%", width:"80px", height: "80px" },
+  { src: giantGrouper, top: "2%", left: "80%", width:"80px", height: "80px" },
+  { src: smallClawedOtter, top: "75%", left: "30%", width:"80px", height: "80px" },
+  { src: piranha, top: "35%", left: "55%", width:"50px", height: "50px" },
+  { src: zebraShark, top: "15%", left: "10%", width:"100px", height: "100px" },
+  { src: californiaSeaLion, top: "75%", left: "55%", width:"80px", height: "80px" },
+  { src: clownfish, top: "65%", left: "5%", width:"80px", height: "80px" },
+  { src: blackStingray, top: "5%", left: "30%", width:"110px", height: "110px" },
+  { src: leatherbackSeaTurtle, top: "55%", left: "65%",width:"80px", height: "80px" },
+  { src: humboldtPenguin, top: "70%", left: "80%",width:"80px", height: "80px" },
 ];
 
 
@@ -45,7 +46,17 @@ const Aquarium: React.FC<AquariumProps> = ({children}) => {
   return (
     <AquariumWrapper>
       {fishPixel.map((fish, index) => (
-          <FishPixel key={index} src={fish} alt={`fish-${index}`} />
+           <FishPixel
+           key={index}
+           src={fish.src}
+           alt={`fish-${index}`}
+           style={{
+            top: fish.top,
+            left: fish.left,
+            width: fish.width,
+            height: fish.height,
+          }}
+         />
       ))}
         {children}
     </AquariumWrapper>
@@ -56,7 +67,7 @@ export default Aquarium;
 
 const AquariumWrapper = styled.div`
   width: 100%;
-  height: 40%;
+  height: 50%;
   background-image: url(${background_aquarium});
   background-size: contain;
   position: relative;
@@ -72,8 +83,7 @@ const floatAnimation = (x: number, y: number) => keyframes`
 
 const FishPixel = styled.img`
   position: absolute;
-  width: 24px; /* 픽셀 아트 크기 */
-  height: 24px;
   animation: ${() => floatAnimation(Math.random() * 20 - 10, Math.random() * 20 - 10)} 3s ease-in-out infinite;
   image-rendering: pixelated; /* 픽셀 아트 효과 */
+
 `;

@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 import {
   Flex, Text, keyframes, Box,
   Menu, MenuButton, MenuList, MenuItem, Image,
-  Icon
+  Icon, Button
 } from "@chakra-ui/react";
 import { HamburgerIcon, AddIcon, ExternalLinkIcon, RepeatIcon, EditIcon, IconButton } from "@chakra-ui/icons";
-import { LogOutIcon, Trash2Icon, MenuIcon } from "lucide-react";
+import { LogOutIcon, Trash2Icon, MenuIcon, Camera, CameraIcon } from "lucide-react";
 import start_img from "../../assets/start_img.svg";
 import fishIcon from "../../assets/fishIcon.svg";
 import Aquarium from "./components/Aquarium";
-import { px } from "framer-motion";
+import bottomLayout_blue from "../../assets/bottomLayout_blue.png";
 
 
 const MainPage: React.FC = () => {
@@ -47,6 +48,15 @@ const MainPage: React.FC = () => {
       <AnimatedFish src={start_img} alt="fish" />
       <Text mt="20px" fontSize='1xl' color="#666666" >물고기를 모아 나만의 아쿠아리움을 완성하세요</Text>
       <Aquarium></Aquarium>
+      <BottomLayout>
+      <Button mt='10px' mb="10px" borderRadius="50%"  bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow={"0px 4px 8px rgba(0, 0, 0, 0.2)"} >
+      <CameraIcon size="40"/>
+      </Button>
+    <GoBook to="/book">
+      도감
+    </GoBook>
+    </BottomLayout>
+
     </Wrapper>
   );
 };
@@ -64,11 +74,25 @@ const Wrapper = styled.div`
     align-items: center;
 
 `;
+// 처음 렌더링 시에만 왼쪽에서 오른쪽으로 슬라이드 애니메이션 정의
+const slideIn = keyframes`
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
 
 // 위아래로 움직이는 애니메이션 정의
 const AnimatedFish = styled.img`
   width: 200px;
-  animation: float 3s ease-in-out infinite;
+  animation: ${slideIn} 1.5s ease-out forwards; /* 1.5초 동안 슬라이드 인 애니메이션 */
+
+  /* 밑에 코드는 둥실둥실 */
+  /* animation: float 3s ease-in-out infinite;
 
   @keyframes float {
     0% {
@@ -80,6 +104,34 @@ const AnimatedFish = styled.img`
     100% {
       transform: translateY(0px);
     }
-  }
+  } */
 `;
 
+const BottomLayout = styled.div`
+  display: fex;
+
+`;
+
+const GoBook =  styled(Link)`
+  background-color: #FFFFFF;
+  color: #05518F;
+  width: 80px;
+  height: 40px;
+  font-size: 24px;
+  border-radius: 10px;
+  position: absolute;
+  margin-top: 20px;
+  text-align: center;
+  right: 30px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    background-color: #C5EFFF;
+  }
+
+  &:active {
+    background-color: #55CFFF;
+    transform: scale(0.95); /* 눌렀을 때 살짝 축소 효과 */
+    box-shadow: 0 0 20px rgba(85, 207, 255, 0.6); /* 번지는 효과 */
+  }
+`;
