@@ -101,16 +101,13 @@ const BookPage = () => {
             position="absolute"
             right="0"
             mt={2}
+            mr={-3}
             _hover={{ bg: "transparent" }}
             _active={{ bg: "transparent" }}
             _focus={{ boxShadow: "none" }}
             animation={`${bounceAnimation} 6s ease-in-out infinite`}
           />
-          <Heading
-            size="xl"
-            textAlign="center"
-            fontFamily="'Yeon Sung', sans-serif"
-          >
+          <Heading size="xl" textAlign="center">
             도감
           </Heading>
           <IconButton
@@ -127,12 +124,7 @@ const BookPage = () => {
         </Box>
 
         <Box mb={3} display="flex" justifyContent="center" alignItems="center">
-          <Text
-            mr={-2}
-            textAlign="center"
-            fontFamily="'Yeon Sung', sans-serif"
-            fontSize={"lg"}
-          >
+          <Text mr={-2} textAlign="center" fontSize={"lg"}>
             물고기를 발견하고 도감을 채워봐요!
           </Text>
           <IconButton
@@ -173,73 +165,41 @@ const BookPage = () => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent maxW={modalSize}>
-          <ModalHeader
-            fontSize="2xl"
-            fontFamily="'Yeon Sung', sans-serif"
-            textAlign={"center"}
-          >
+          <ModalHeader fontSize="2xl" textAlign={"center"}>
             멸종 등급 설명
           </ModalHeader>
           <ModalBody>
-            <Text
-              fontWeight="bold"
-              color="red.500"
-              mb={2}
-              fontFamily="'Yeon Sung', sans-serif"
-              fontSize="xl"
-            >
+            <Text fontWeight="bold" color="red.500" mb={2} fontSize="xl">
               CR (위급)
             </Text>
-            <Text mb={4} fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
+            <Text mb={4} fontSize="lg">
               멸종 위험이 가장 높은 상태로, 즉각적인 보존 조치가 없으면 멸종될
               가능성이 큽니다.
             </Text>
-            <Text
-              fontWeight="bold"
-              color="orange.500"
-              mb={2}
-              fontFamily="'Yeon Sung', sans-serif"
-              fontSize="xl"
-            >
+            <Text fontWeight="bold" color="orange.500" mb={2} fontSize="xl">
               EN (위기)
             </Text>
-            <Text mb={4} fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
+            <Text mb={4} fontSize="lg">
               멸종 위험이 높아, 보존 조치가 필요하지만 위급보다는 다소 낮은
               수준입니다.
             </Text>
-            <Text
-              fontWeight="bold"
-              color="yellow.500"
-              mb={2}
-              fontFamily="'Yeon Sung', sans-serif"
-              fontSize="xl"
-            >
+            <Text fontWeight="bold" color="yellow.500" mb={2} fontSize="xl">
               VU (취약)
             </Text>
-            <Text mb={4} fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
+            <Text mb={4} fontSize="lg">
               멸종 위험이 비교적 높은 상태로, 특정 환경 변화나 인간의 활동으로
               인해 멸종될 가능성이 있는 상태입니다.
             </Text>
-            <Text
-              fontWeight="bold"
-              color="green.500"
-              mb={2}
-              fontFamily="'Yeon Sung', sans-serif"
-              fontSize="xl"
-            >
+            <Text fontWeight="bold" color="green.500" mb={2} fontSize="xl">
               LC (관심 필요 없음)
             </Text>
-            <Text fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
+            <Text fontSize="lg">
               멸종 위험이 거의 없는 상태로, 개체 수가 충분해 안정적인
               상태입니다.
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button
-              colorScheme="blue"
-              onClick={onClose}
-              fontFamily="'Yeon Sung', sans-serif"
-            >
+            <Button colorScheme="blue" onClick={onClose}>
               닫기
             </Button>
           </ModalFooter>
@@ -259,13 +219,7 @@ const BookPage = () => {
             <>
               <ModalCloseButton mt={2} />
               {/* 제목 */}
-              <ModalHeader
-                fontSize="2xl"
-                textAlign="center"
-                w="100%"
-                mt={-5}
-                fontFamily="'Yeon Sung', sans-serif"
-              >
+              <ModalHeader fontSize="2xl" textAlign="center" w="100%" mt={-5}>
                 {selectedMarineLife.name}
               </ModalHeader>
 
@@ -294,18 +248,13 @@ const BookPage = () => {
 
                 {/* 상태 텍스트 */}
                 <Flex alignItems="center" justifyContent="center" gap="4px">
-                  <Text
-                    fontSize="xl"
-                    fontWeight="bold"
-                    fontFamily="'Yeon Sung', sans-serif"
-                  >
+                  <Text fontSize="xl" fontWeight="bold">
                     멸종 등급:
                   </Text>
                   <Text
                     fontWeight="bold"
                     color={getStatusColor(selectedMarineLife.status)}
                     fontSize="xl"
-                    fontFamily="'Yeon Sung', sans-serif"
                   >
                     {selectedMarineLife.status}
                   </Text>
@@ -313,11 +262,7 @@ const BookPage = () => {
 
                 {/* 설명 */}
                 <ModalBody paddingX="10px">
-                  <Text
-                    fontSize="lg"
-                    textAlign={"left"}
-                    fontFamily="'Yeon Sung', sans-serif"
-                  >
+                  <Text fontSize="lg" textAlign={"left"}>
                     {selectedMarineLife.description ?? "설명이 없습니다."}
                   </Text>
                 </ModalBody>
@@ -332,16 +277,15 @@ const BookPage = () => {
         overflowY="auto"
         css={{
           "&::-webkit-scrollbar": {
-            width: "10px", // 스크롤바 너비
+            width: "5px", // 스크롤바 너비
             backgroundColor: "#E9F9FF", // 스크롤바 배경색 (Box 배경과 일치)
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#6CC1FF", // 스크롤바 색상
+            backgroundColor: "#888", // 스크롤바 색상
             borderRadius: "4px", // 스크롤바 모서리 둥글게
-            border: "2px solid #E9F9FF", // 스크롤바를 둘러싼 테두리 색상
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#55A4E6", // 호버 시 스크롤바 색상 변경
+            backgroundColor: "#555", // 호버 시 스크롤바 색상 변경
           },
         }}
         background="#E9F9FF"
@@ -409,24 +353,14 @@ const BookPage = () => {
                         }}
                       />
                     ) : (
-                      <Text
-                        color="gray.500"
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="'Yeon Sung', sans-serif"
-                      >
+                      <Text color="gray.500" fontSize="md" textAlign="center">
                         등록되지 않은
                         <br />
                         물고기에요
                       </Text>
                     )}
                   </Box>
-                  <Text
-                    textAlign="center"
-                    fontWeight="500"
-                    fontSize="md"
-                    fontFamily="'Yeon Sung', sans-serif"
-                  >
+                  <Text textAlign="center" fontWeight="500" fontSize="md">
                     {fish.name}
                   </Text>
                 </CardBody>

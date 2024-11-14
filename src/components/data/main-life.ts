@@ -46,7 +46,7 @@ export const MAIN_LIFE = [
     status: "EN",
     description:
       "작은발톱수달은 하천과 해양 생태계 모두에서 중요한 역할을 하는 동물로, 서식지 파괴로 인해 위기에 처해 있습니다. 수달의 서식지 보호는 생물 다양성 유지와 하천 생태계 건강에 필수적입니다.",
-    image: "src/components/images/African_otter.svg",
+    image: "src/components/images/Small_clawed_otter.svg",
   },
   {
     name: "제브라상어",

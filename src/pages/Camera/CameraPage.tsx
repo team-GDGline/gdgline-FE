@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import HomeIcon from "../../components/icons/HomeIcon";
 import { Button, IconButton } from "@chakra-ui/react";
 import { CameraIcon } from "lucide-react";
-import start_img from "../../assets/start_img.svg";
 
 const CameraPage: React.FC = () => {
     const navigate = useNavigate();
