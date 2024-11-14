@@ -9,7 +9,7 @@ import start_img from "../../assets/start_img.svg";
 import NextButton from "../../components/NextButton.tsx";
 import { useNavigate } from "react-router-dom";
 
-const StartPage: React.FC = () => {
+const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const [animate, setAnimate] = useState(false); // 애니메이션 상태
 
@@ -57,7 +57,7 @@ const StartPage: React.FC = () => {
   );
 };
 
-export default StartPage;
+export default SignupPage;
 
 
 const Wrapper = styled.div`
