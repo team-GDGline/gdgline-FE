@@ -14,11 +14,6 @@ import sadImage from "./assets/sad.svg"; // sad.svg 파일을 import
 const NotFound = () => {
   const navigate = useNavigate();
 
-  const nextPage = () => {
-    // 사진 촬영 페이지로 이동하는 함수 (예: /capture 페이지로 이동)
-    navigate("/capture");
-  };
-
   return (
     <Box
       h="100vh"
@@ -35,17 +30,15 @@ const NotFound = () => {
           position="relative"
           mb={4}
         >
-          <Heading
-            size="xl"
-            textAlign="center"
-            fontFamily="'Yeon Sung', sans-serif"
-          >
+          <Heading size="xl" textAlign="center">
             분석 결과
           </Heading>
+
+          {/* 홈 아이콘 버튼 */}
           <IconButton
             icon={<HomeIcon boxSize="30px" />}
             aria-label="홈으로 이동"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/main")}
             variant="ghost"
             _hover={{ bg: "transparent" }}
             _active={{ bg: "transparent" }}
@@ -53,6 +46,19 @@ const NotFound = () => {
             position="absolute"
             left="0"
           />
+
+          {/* 오른쪽 끝에 위치한 "도감" 텍스트 */}
+          <Text
+            position="absolute"
+            right="0"
+            cursor="pointer"
+            fontSize="2xl"
+            color="black"
+            onClick={() => navigate("/book")}
+            _hover={{ textDecoration: "underline" }}
+          >
+            도감
+          </Text>
         </Box>
       </Container>
 
@@ -66,15 +72,16 @@ const NotFound = () => {
         alignItems="center"
         textAlign="center"
       >
-        <Text fontSize="2xl" mb={6} fontFamily="'Yeon Sung', sans-serif">
+        <Text fontSize="2xl" mb={6}>
           분석된 물고기가 없어요 😢
         </Text>
         <Button
-          onClick={nextPage}
+          onClick={() => navigate("/capture")}
           colorScheme="blue"
           variant="outline"
-          width="80%"
-          fontFamily="'Yeon Sung', sans-serif"
+          background={"white"}
+          width="100%"
+          boxShadow={"md"}
         >
           다시 촬영하기
         </Button>
