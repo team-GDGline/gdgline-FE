@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { useEffect, useState } from "react";
-
+import theme from './styles/theme';
 // 애니메이션 정의
 const bubbleRise = keyframes`
   0% {
@@ -60,7 +60,7 @@ const App = () => {
   }, []);
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <PageContainer>
         <BubbleContainer>
           {bubbles.map((bubble) => (

@@ -116,7 +116,7 @@ const BookPage = () => {
           <IconButton
             icon={<HomeIcon boxSize="30px" />}
             aria-label="홈으로 이동"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/main")}
             variant="ghost"
             _hover={{ bg: "transparent" }}
             _active={{ bg: "transparent" }}
