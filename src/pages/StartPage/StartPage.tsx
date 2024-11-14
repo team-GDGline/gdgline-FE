@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "@emotion/styled";
 import { Flex, Text, keyframes, Box} from "@chakra-ui/react";
 import background_sea from "../../assets/background_sea.svg";
@@ -11,16 +11,15 @@ import { useNavigate } from "react-router-dom";
 
 const StartPage: React.FC = () => {
   const navigate = useNavigate();
+  const [animate, setAnimate] = useState(false); // 애니메이션 상태
 
   const handleStartClick = () => {
-    const waveElement = document.getElementById("waveEffect");
-    if (waveElement) {
-      waveElement.classList.add("bubble-transition"); // 물방울 애니메이션 클래스 추가
-      setTimeout(() => {
-        navigate("/"); // 페이지 이동
-      }, 1000); // 애니메이션 지속 시간 후 페이지 이동
-    }
+    setAnimate(true); // 애니메이션 시작
+    setTimeout(() => {
+      navigate("/"); // 페이지 이동
+    }, 1200); // 애니메이션이 끝난 후 페이지 이동
   };
+
   
   return (
     <Wrapper id="waveEffect">
@@ -51,7 +50,7 @@ const StartPage: React.FC = () => {
       <Text fontSize='5xl' color="#152972" >물</Text>
       <Text fontSize='5xl' color="#152972" >멍</Text>
   </Flex>
-      <AnimatedFish src={start_img} alt="fish" />
+  <AnimatedFish src={start_img} alt="fish" className={animate ? "animate-out" : ""} />
       <NextButton onClick={handleStartClick}>시작하기</NextButton>
       {/* 나중에는 Login화면으로 가야 함 일단은 MainPage로 가도록 설정 */}
       </Wrapper>
@@ -72,27 +71,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-
-
-  // 물방울 애니메이션 클래스
-  &.bubble-transition {
-    animation: bubble 1s ease-in-out forwards;
-  }
-
-  @keyframes bubble {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.3);
-      opacity: 0.8;
-    }
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
+    overflow: hidden;
 
 `;
 
@@ -102,31 +81,36 @@ const swimAnimation = keyframes`
   100% { transform: translateX(100%); }
 `;
 
-// 물결 애니메이션 정의
-const waveAnimation = keyframes`
-  0% { transform: scale(1) translateY(0); }
-  50% { transform: scale(1.1) translateY(-5px); }
-  100% { transform: scale(1) translateY(0); }
+// // 물결 애니메이션 정의
+// const waveAnimation = keyframes`
+//   0% { transform: scale(1) translateY(0); }
+//   50% { transform: scale(1.1) translateY(-5px); }
+//   100% { transform: scale(1) translateY(0); }
+// `;
+
+// start_img 둥둥 떠있는 애니메이션과 클릭 후 반동 효과 애니메이션
+const floatAnimation = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 `;
 
+const bounceOutAnimation = keyframes`
+  0% { transform: translateX(0) translateY(0); }
+  30% { transform: translateX(-20px) translateY(-5px); } /* 왼쪽으로 반동 */
+  100% { transform: translateX(200%) translateY(20px); } /* 오른쪽으로 빠르게 이동하며 위아래 흔들림 */
+`;
 // 위아래로 움직이는 애니메이션 정의
+//next로 넘어갈 때 회전 및 이동
 const AnimatedFish = styled.img`
   width: 500px;
-  animation: float 3s ease-in-out infinite;
   position: relative;
   z-index: 5;
+  animation: ${floatAnimation} 3s ease-in-out infinite; /* 둥둥 떠있는 애니메이션 */
 
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
+  &.animate-out {
+    animation: ${bounceOutAnimation} 1.3s ease-in-out forwards; /* 클릭 후 반동 애니메이션 */
   }
+  
 `;
 
 
