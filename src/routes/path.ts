@@ -4,4 +4,6 @@ export const RouterPath = {
   main: "/main",
   book: "/book",
   loading: "/loading",
+  analysis: "/analysis",
+  notFound: "/notFound",
 };
