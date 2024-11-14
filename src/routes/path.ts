@@ -1,7 +1,7 @@
 export const RouterPath = {
   root: "/",
-  main: "/",
-  start: "/start",
+  start: "/",
+  main: "/main",
   book: "/book",
   loading: "/loading",
 };

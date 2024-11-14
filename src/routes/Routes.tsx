@@ -9,11 +9,11 @@ import { RouterPath } from "./path"; // 경로 상수 가져오기
 const router = createBrowserRouter([
   {
     path: RouterPath.root,
-    element: <MainPage />, // 메인 페이지를 직접 렌더링
+    element: <StartPage />, // 메인 페이지를 직접 렌더링
   },
   {
-    path: RouterPath.start,
-    element: <StartPage/>,
+    path: RouterPath.main,
+    element: <MainPage/>,
   },
   {
     path: RouterPath.book,
