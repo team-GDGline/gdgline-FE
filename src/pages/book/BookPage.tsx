@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   SimpleGrid,
@@ -12,47 +13,73 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
   ModalBody,
   ModalFooter,
+  ModalCloseButton,
   Button,
-  Link,
   useDisclosure,
   useBreakpointValue,
+  keyframes,
+  VStack,
+  Flex,
 } from "@chakra-ui/react";
 import HomeIcon from "../../components/icons/HomeIcon";
-import InfoIcon from "../../components/icons/InfoIcon";
+import InfoIcon from "./assets/InfoIcon";
+import SearchIcon from "./assets/SearchIcon";
 import { MARINE_LIFE } from "./data/marin-life";
+import { MAIN_LIFE } from "../../components/data/main-life";
 import { useNavigate } from "react-router-dom";
 
+interface MarineLife {
+  name: string;
+  status: string;
+  description: string;
+  image: string;
+}
+
+const bounceAnimation = keyframes`
+  0%, 10%, 20%, 100% { opacity: 1; }
+  5%, 15% { opacity: 0; }
+`;
+
 const BookPage = () => {
-  const totalCards = MARINE_LIFE.length; // 전체 물고기 종류 수
-  const discoveredCards = 7; // 발견한 물고기 종류 수
-  const { isOpen, onOpen, onClose } = useDisclosure(); // 모달 열고 닫기 상태 관리
+  const totalCards = MARINE_LIFE.length;
+  const discoveredCards = 7;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedMarineLife, setSelectedMarineLife] =
+    useState<MarineLife | null>(null);
   const navigate = useNavigate();
 
-  // 상태에 따른 색상 매핑 함수
   const getStatusColor = (status: string) => {
     switch (status) {
       case "LC":
-        return "green.500"; // 초록색
+        return "green.500";
       case "VU":
-        return "yellow.500"; // 노란색
+        return "yellow.500";
       case "EN":
-        return "orange.500"; // 주황색
+        return "orange.500";
       case "CR":
-        return "red.500"; // 빨간색
+        return "red.500";
       default:
-        return "gray.500"; // 기본 색상 (LC, VU, EN, CR 외의 경우)
+        return "gray.500";
     }
   };
 
-  // 반응형으로 모달의 너비 조정 (모바일에서는 90vw, 데스크탑에서는 기본 크기)
   const modalSize = useBreakpointValue({ base: "90vw", md: "md" });
+  const cardSize = useBreakpointValue({ base: "80vw", md: "md" });
+
+  const handleCardClick = (fish: Partial<MarineLife>) => {
+    const matchedFish = MAIN_LIFE.find(
+      (mainFish) => mainFish.name === fish.name
+    );
+    if (matchedFish) {
+      setSelectedMarineLife(matchedFish);
+    }
+  };
 
   return (
     <Box h="100vh" display="flex" flexDirection="column">
-      <Container maxW="container.xl" py={4} flex="none">
+      <Container maxW="container.xl" py={4} flex="none" background="#E9F9FF">
         <Box
           display="flex"
           justifyContent="center"
@@ -60,28 +87,34 @@ const BookPage = () => {
           position="relative"
           mb={4}
         >
-          {/* "보호종 더 알아보기" 링크 */}
-          <Link
-            href="https://www.nie.re.kr/nie/pgm/edSearch/main.do?menuNo=200133"
-            isExternal
+          <IconButton
+            icon={<SearchIcon boxSize="120px" />}
+            aria-label="보호종 더 알아보기"
+            onClick={() =>
+              window.open(
+                "https://www.nie.re.kr/nie/pgm/edSearch/main.do?menuNo=200133",
+                "_blank"
+              )
+            }
+            variant="ghost"
             color="blue.500"
-            fontWeight="bold"
-            fontSize="sm"
             position="absolute"
-            left="0" // 왼쪽에 배치
-            _hover={{ textDecoration: "underline" }}
+            right="0"
+            mt={2}
+            _hover={{ bg: "transparent" }}
+            _active={{ bg: "transparent" }}
+            _focus={{ boxShadow: "none" }}
+            animation={`${bounceAnimation} 6s ease-in-out infinite`}
+          />
+          <Heading
+            size="xl"
+            textAlign="center"
+            fontFamily="'Yeon Sung', sans-serif"
           >
-            보호종 더 알아보기
-          </Link>
-
-          {/* "도감" 제목 */}
-          <Heading size="lg" textAlign="center">
             도감
           </Heading>
-
-          {/* 홈 버튼 */}
           <IconButton
-            icon={<HomeIcon boxSize="24px" />}
+            icon={<HomeIcon boxSize="30px" />}
             aria-label="홈으로 이동"
             onClick={() => navigate("/")}
             variant="ghost"
@@ -89,16 +122,24 @@ const BookPage = () => {
             _active={{ bg: "transparent" }}
             _focus={{ boxShadow: "none" }}
             position="absolute"
-            right="0"
+            left="0"
           />
         </Box>
 
-        <Box mb={5} display="flex" justifyContent="center" alignItems="center">
-          <Text mr={-1} textAlign="center">
+        <Box mb={3} display="flex" justifyContent="center" alignItems="center">
+          <Text
+            mr={-2}
+            textAlign="center"
+            fontFamily="'Yeon Sung', sans-serif"
+            fontSize={"lg"}
+          >
             물고기를 발견하고 도감을 채워봐요!
           </Text>
           <IconButton
-            icon={<InfoIcon boxSize="35px" />}
+            icon={<InfoIcon boxSize="40px" />}
+            mr={-2}
+            mt={5}
+            pl={4}
             aria-label="멸종 등급 설명 보기"
             onClick={onOpen}
             variant="ghost"
@@ -114,6 +155,7 @@ const BookPage = () => {
             size="lg"
             colorScheme="blue"
             borderRadius="full"
+            background="white"
           />
           <Text
             position="absolute"
@@ -131,43 +173,157 @@ const BookPage = () => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent maxW={modalSize}>
-          <ModalHeader>멸종 등급 설명</ModalHeader>
-          <ModalCloseButton />
+          <ModalHeader
+            fontSize="2xl"
+            fontFamily="'Yeon Sung', sans-serif"
+            textAlign={"center"}
+          >
+            멸종 등급 설명
+          </ModalHeader>
           <ModalBody>
-            <Text fontWeight="bold" color="red.500" mb={2}>
+            <Text
+              fontWeight="bold"
+              color="red.500"
+              mb={2}
+              fontFamily="'Yeon Sung', sans-serif"
+              fontSize="xl"
+            >
               CR (위급)
             </Text>
-            <Text mb={4}>
+            <Text mb={4} fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
               멸종 위험이 가장 높은 상태로, 즉각적인 보존 조치가 없으면 멸종될
               가능성이 큽니다.
             </Text>
-            <Text fontWeight="bold" color="orange.500" mb={2}>
+            <Text
+              fontWeight="bold"
+              color="orange.500"
+              mb={2}
+              fontFamily="'Yeon Sung', sans-serif"
+              fontSize="xl"
+            >
               EN (위기)
             </Text>
-            <Text mb={4}>
+            <Text mb={4} fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
               멸종 위험이 높아, 보존 조치가 필요하지만 위급보다는 다소 낮은
               수준입니다.
             </Text>
-            <Text fontWeight="bold" color="yellow.500" mb={2}>
+            <Text
+              fontWeight="bold"
+              color="yellow.500"
+              mb={2}
+              fontFamily="'Yeon Sung', sans-serif"
+              fontSize="xl"
+            >
               VU (취약)
             </Text>
-            <Text mb={4}>
+            <Text mb={4} fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
               멸종 위험이 비교적 높은 상태로, 특정 환경 변화나 인간의 활동으로
               인해 멸종될 가능성이 있는 상태입니다.
             </Text>
-            <Text fontWeight="bold" color="green.500" mb={2}>
+            <Text
+              fontWeight="bold"
+              color="green.500"
+              mb={2}
+              fontFamily="'Yeon Sung', sans-serif"
+              fontSize="xl"
+            >
               LC (관심 필요 없음)
             </Text>
-            <Text>
+            <Text fontSize="lg" fontFamily="'Yeon Sung', sans-serif">
               멸종 위험이 거의 없는 상태로, 개체 수가 충분해 안정적인
               상태입니다.
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={onClose}>
+            <Button
+              colorScheme="blue"
+              onClick={onClose}
+              fontFamily="'Yeon Sung', sans-serif"
+            >
               닫기
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* 해양 생물 정보 모달 */}
+      <Modal
+        isOpen={!!selectedMarineLife}
+        onClose={() => setSelectedMarineLife(null)}
+        isCentered
+        size="lg"
+      >
+        <ModalOverlay />
+        <ModalContent padding="20px" borderRadius="10px" maxWidth={cardSize}>
+          {selectedMarineLife && (
+            <>
+              <ModalCloseButton mt={2} />
+              {/* 제목 */}
+              <ModalHeader
+                fontSize="2xl"
+                textAlign="center"
+                w="100%"
+                mt={-5}
+                fontFamily="'Yeon Sung', sans-serif"
+              >
+                {selectedMarineLife.name}
+              </ModalHeader>
+
+              <VStack spacing={4} align="center" textAlign="center">
+                {/* 원형 이미지 */}
+                <Box
+                  width="200px"
+                  height="200px"
+                  borderRadius="full"
+                  overflow="hidden"
+                  boxShadow="lg"
+                  bg="gray.200"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <img
+                    src={selectedMarineLife.image ?? "default-image-path"} // 이미지가 없을 경우 대체 경로 사용
+                    alt={selectedMarineLife.name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </Box>
+
+                {/* 상태 텍스트 */}
+                <Flex alignItems="center" justifyContent="center" gap="4px">
+                  <Text
+                    fontSize="xl"
+                    fontWeight="bold"
+                    fontFamily="'Yeon Sung', sans-serif"
+                  >
+                    멸종 등급:
+                  </Text>
+                  <Text
+                    fontWeight="bold"
+                    color={getStatusColor(selectedMarineLife.status)}
+                    fontSize="xl"
+                    fontFamily="'Yeon Sung', sans-serif"
+                  >
+                    {selectedMarineLife.status}
+                  </Text>
+                </Flex>
+
+                {/* 설명 */}
+                <ModalBody paddingX="10px">
+                  <Text
+                    fontSize="lg"
+                    textAlign={"left"}
+                    fontFamily="'Yeon Sung', sans-serif"
+                  >
+                    {selectedMarineLife.description ?? "설명이 없습니다."}
+                  </Text>
+                </ModalBody>
+              </VStack>
+            </>
+          )}
         </ModalContent>
       </Modal>
 
@@ -176,26 +332,26 @@ const BookPage = () => {
         overflowY="auto"
         css={{
           "&::-webkit-scrollbar": {
-            width: "10px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
+            width: "10px", // 스크롤바 너비
+            backgroundColor: "#E9F9FF", // 스크롤바 배경색 (Box 배경과 일치)
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "4px",
+            backgroundColor: "#6CC1FF", // 스크롤바 색상
+            borderRadius: "4px", // 스크롤바 모서리 둥글게
+            border: "2px solid #E9F9FF", // 스크롤바를 둘러싼 테두리 색상
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            background: "#555",
+            backgroundColor: "#55A4E6", // 호버 시 스크롤바 색상 변경
           },
         }}
+        background="#E9F9FF"
       >
         <Container maxW="container.xl" pb={8}>
           <SimpleGrid
             columns={{ base: 3, md: 4, lg: 4 }}
             spacing={3}
             mx="auto"
-            mt={4} // 상단 여백 추가
+            mt={4}
           >
             {MARINE_LIFE.map((fish, index) => (
               <Card
@@ -204,18 +360,15 @@ const BookPage = () => {
                 maxW="160px"
                 w="100%"
                 position="relative"
-                _hover={{
-                  transform: "translateY(-2px)",
-                  boxShadow: "lg",
-                }}
+                onClick={() => handleCardClick(fish)}
+                _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
                 transition="all 0.2s"
               >
-                {/* 멸종 등급 책갈피 모양 */}
                 <Box
                   position="absolute"
                   top="0"
                   left="0"
-                  bg={getStatusColor(fish.status)} // 상태에 따라 색상 설정
+                  bg={getStatusColor(fish.status)}
                   color="white"
                   px={2}
                   py={1}
@@ -228,7 +381,7 @@ const BookPage = () => {
                   {fish.status}
                 </Box>
 
-                <CardBody p={2}>
+                <CardBody p={2} background="white">
                   <Box
                     h="100px"
                     bg="gray.200"
@@ -237,16 +390,42 @@ const BookPage = () => {
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
+                    overflow="hidden"
                   >
-                    <Text color="gray.500" fontSize="xs" textAlign="center">
-                      등록되지 않은 <br /> 물고기에요
-                    </Text>
+                    {MAIN_LIFE.some(
+                      (mainFish) =>
+                        mainFish.name === fish.name && mainFish.image
+                    ) ? (
+                      <img
+                        src={
+                          MAIN_LIFE.find(
+                            (mainFish) => mainFish.name === fish.name
+                          )?.image
+                        } // MAIN_LIFE에서 이미지 경로를 가져옵니다.
+                        alt={fish.name}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    ) : (
+                      <Text
+                        color="gray.500"
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="'Yeon Sung', sans-serif"
+                      >
+                        등록되지 않은
+                        <br />
+                        물고기에요
+                      </Text>
+                    )}
                   </Box>
                   <Text
                     textAlign="center"
-                    fontWeight="medium"
-                    fontSize="sm"
-                    noOfLines={1}
+                    fontWeight="500"
+                    fontSize="md"
+                    fontFamily="'Yeon Sung', sans-serif"
                   >
                     {fish.name}
                   </Text>
