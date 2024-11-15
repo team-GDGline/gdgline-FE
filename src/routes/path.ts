@@ -1,4 +1,5 @@
 export const RouterPath = {
+  token: "",
   root: "/",
   start: "/",
   login: "/login",
