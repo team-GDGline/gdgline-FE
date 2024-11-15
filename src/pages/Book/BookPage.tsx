@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   SimpleGrid,
@@ -29,6 +29,9 @@ import SearchIcon from "./assets/SearchIcon";
 import { MARINE_LIFE } from "./data/marin-life";
 import { MAIN_LIFE } from "../../components/data/main-life";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ENGLISH_TO_KOREAN_MAP } from "../../components/data/english-to-korean";
+import { API_BASE_URL } from "../../api/constant";
 
 interface MarineLife {
   name: string;
@@ -49,6 +52,7 @@ const BookPage = () => {
   const [selectedMarineLife, setSelectedMarineLife] =
     useState<MarineLife | null>(null);
   const navigate = useNavigate();
+  const [caughtFishNames, setCaughtFishNames] = useState<string[]>([]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -67,6 +71,34 @@ const BookPage = () => {
 
   const modalSize = useBreakpointValue({ base: "90vw", md: "md" });
   const cardSize = useBreakpointValue({ base: "80vw", md: "md" });
+
+  const accessToken = localStorage.getItem("accessToken"); // 실제 토큰 값을 여기에 설정하세요.
+  useEffect(() => {
+    const fetchFishData = async () => {
+      try {
+        const data = await axios.get(`${API_BASE_URL}/api/v1/pokedex`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
+          },
+        });
+        const caughtFishKoreanNames = Object.entries(data)
+          .filter(([, caught]) => caught)
+          .map(
+            ([name]) =>
+              ENGLISH_TO_KOREAN_MAP[name as keyof typeof ENGLISH_TO_KOREAN_MAP]
+          )
+          .filter(Boolean); // undefined 제거
+        setCaughtFishNames(caughtFishKoreanNames);
+      } catch (error) {
+        console.error(
+          "물고기 데이터를 가져오는 중 오류가 발생했습니다:",
+          error
+        );
+      }
+    };
+
+    fetchFishData();
+  });
 
   const handleCardClick = (fish: Partial<MarineLife>) => {
     const matchedFish = MAIN_LIFE.find(
@@ -89,7 +121,7 @@ const BookPage = () => {
         >
           <IconButton
             icon={<SearchIcon boxSize="120px" />}
-            aria-label="보호종 더 알아보러 가기"
+            aria-label="보호종 더 알아보기"
             onClick={() =>
               window.open(
                 "https://www.nie.re.kr/nie/pgm/edSearch/main.do?menuNo=200133",
@@ -218,13 +250,11 @@ const BookPage = () => {
           {selectedMarineLife && (
             <>
               <ModalCloseButton mt={2} />
-              {/* 제목 */}
               <ModalHeader fontSize="2xl" textAlign="center" w="100%" mt={-5}>
                 {selectedMarineLife.name}
               </ModalHeader>
 
               <VStack spacing={4} align="center" textAlign="center">
-                {/* 원형 이미지 */}
                 <Box
                   width="200px"
                   height="200px"
@@ -245,8 +275,6 @@ const BookPage = () => {
                     }}
                   />
                 </Box>
-
-                {/* 상태 텍스트 */}
                 <Flex alignItems="center" justifyContent="center" gap="4px">
                   <Text fontSize="xl" fontWeight="bold">
                     멸종 등급:
@@ -260,7 +288,6 @@ const BookPage = () => {
                   </Text>
                 </Flex>
 
-                {/* 설명 */}
                 <ModalBody paddingX="10px">
                   <Text fontSize="lg" textAlign={"left"}>
                     {selectedMarineLife.description ?? "설명이 없습니다."}
@@ -277,15 +304,15 @@ const BookPage = () => {
         overflowY="auto"
         css={{
           "&::-webkit-scrollbar": {
-            width: "5px", // 스크롤바 너비
-            backgroundColor: "#E9F9FF", // 스크롤바 배경색 (Box 배경과 일치)
+            width: "5px",
+            backgroundColor: "#E9F9FF",
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#888", // 스크롤바 색상
-            borderRadius: "4px", // 스크롤바 모서리 둥글게
+            backgroundColor: "#888",
+            borderRadius: "4px",
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#555", // 호버 시 스크롤바 색상 변경
+            backgroundColor: "#555",
           },
         }}
         background="#E9F9FF"
@@ -297,10 +324,12 @@ const BookPage = () => {
             mx="auto"
             mt={4}
           >
-            {MARINE_LIFE.map((fish, index) => (
+            {MAIN_LIFE.map((fish, index) => (
               <Card
                 key={index}
-                bg="gray.100"
+                bg={
+                  caughtFishNames.includes(fish.name) ? "teal.200" : "gray.100"
+                }
                 maxW="160px"
                 w="100%"
                 position="relative"
@@ -336,16 +365,9 @@ const BookPage = () => {
                     justifyContent="center"
                     overflow="hidden"
                   >
-                    {MAIN_LIFE.some(
-                      (mainFish) =>
-                        mainFish.name === fish.name && mainFish.image
-                    ) ? (
+                    {caughtFishNames.includes(fish.name) ? (
                       <img
-                        src={
-                          MAIN_LIFE.find(
-                            (mainFish) => mainFish.name === fish.name
-                          )?.image
-                        } // MAIN_LIFE에서 이미지 경로를 가져옵니다.
+                        src={fish.image}
                         alt={fish.name}
                         style={{
                           width: "100%",
