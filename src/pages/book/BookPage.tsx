@@ -89,7 +89,7 @@ const BookPage = () => {
         >
           <IconButton
             icon={<SearchIcon boxSize="120px" />}
-            aria-label="보호종 더 알아보기"
+            aria-label="보호종 더 알아보러 가기"
             onClick={() =>
               window.open(
                 "https://www.nie.re.kr/nie/pgm/edSearch/main.do?menuNo=200133",
