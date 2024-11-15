@@ -43,11 +43,15 @@ interface AquariumProps {
 
 const Aquarium: React.FC<AquariumProps> = ({ children }) => {
   const [fishData, setFishData] = useState<Record<string, boolean>>({});
-
+  const accessToken = 'your-access-token'; // 실제 토큰 값을 여기에 설정하세요.
   useEffect(() => {
     const fetchFishData = async () => {
       try {
-        // const response = await axios.get(`${API_BASE_URL}/api/v1/pokedex`);
+        // const response = await axios.get(`${API_BASE_URL}/api/v1/pokedex`,
+      //   {    headers: {
+      //     Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
+      //   },
+      // });
         // setFishData(response.data); // 물고기 데이터 저장
         setFishData(
           {
