@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "../../components/icons/HomeIcon";
 import { Button, Flex, IconButton, useToast } from "@chakra-ui/react";
-import { CameraIcon, ImageIcon } from "lucide-react";
+import { CameraIcon, ImageIcon, SwitchCameraIcon } from "lucide-react";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
@@ -11,6 +11,7 @@ const CameraPage: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isRearCamera, setIsRearCamera] = useState(true); // 후면 카메라 상태
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -36,7 +37,34 @@ const CameraPage: React.FC = () => {
     startCamera();
     return () => stopCamera(); // 페이지 떠날 때 카메라 정지
   }, []);
+  const switchCamera = async () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      // 기존 스트림 중지
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+    }
 
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: isRearCamera ? "user" : { exact: "environment" } },
+      });
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setIsRearCamera(!isRearCamera); // 카메라 상태 토글
+    } catch (err) {
+      console.error("Error switching the camera:", err);
+      toast({
+        title: "카메라 전환에 실패했습니다.",
+        description: "브라우저 또는 기기 설정을 확인해주세요.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -184,6 +212,10 @@ const CameraPage: React.FC = () => {
                 <CameraButton onClick={captureImage}>
                   <CameraIcon size="40" />
                 </CameraButton>
+
+                <SwitchButton onClick={switchCamera} mr="20px">
+                  <SwitchCameraIcon size="40" />
+                </SwitchButton>
               </Flex>
             )}
 
@@ -352,3 +384,26 @@ const CameraButton = styled(Button)`
 //         background-color: #f0f0f0;
 //     }
 // `;
+const SwitchButton = styled(Button)`
+ background-color: #ffffff;
+  color: black;
+  width: 60px;
+  height: 60px;
+  font-weight: 300;
+  font-size: 24px;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  right: 20px;
+  text-align: center;
+  &:hover {
+    background-color: #c5efff;
+  }
+
+  &:active {
+    background-color: #55cfff;
+    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(85, 207, 255, 0.6);
+  }
+`;

@@ -8,12 +8,12 @@ const location = useLocation();
   const isAuthPath = location.pathname === "/login" || location.pathname === "/signup";
   
   
-    useEffect(() => {
-    if(!localStorage.getItem("accessToken") && !isAuthPath){
-      navigate("/login");
-    }
+  //   useEffect(() => {
+  //   if(!localStorage.getItem("accessToken") && !isAuthPath){
+  //     navigate("/login");
+  //   }
 
-  }, [location.pathname, isAuthPath, navigate]);
+  // }, [location.pathname, isAuthPath, navigate]);
   return (
     <div>
             <Outlet />
