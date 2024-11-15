@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import axios from "axios";
-import { API_BASE_URL } from "../../../api/constant";
+
 import background_aquarium from "../../../assets/background_aquarium.svg";
 import gardenEel from "../../../assets/pixel/gardenEel.svg";
 import napoleonWrasse from "../../../assets/pixel/napoleonWrasse.svg";
@@ -18,6 +18,8 @@ import clownfish from "../../../assets/pixel/clownfish.svg";
 import blackStingray from "../../../assets/pixel/blackStingray.svg";
 import leatherbackSeaTurtle from "../../../assets/pixel/leatherbackSeaTurtle.svg";
 import humboldtPenguin from "../../../assets/pixel/humboldtPenguin.svg";
+import { API_BASE_URL } from "../../../api/constant";
+
 
 const fishPixel = [
   { src: gardenEel, key: "gardenEel", top: "75%", left: "10%", width: "80px", height: "80px" },
@@ -42,22 +44,36 @@ interface AquariumProps {
 
 const Aquarium: React.FC<AquariumProps> = ({ children }) => {
   const [fishData, setFishData] = useState<Record<string, boolean>>({});
-  const accessToken = localStorage.getItem("accessToken"); // 실제 토큰 값을 여기에 설정하세요.
+
   useEffect(() => {
     const fetchFishData = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/v1/pokedex`,
-        {    headers: {
-          Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
-        },
-      });
+        const response = await axios.get(`${API_BASE_URL}/api/v1/pokedex`);
         setFishData(response.data); // 물고기 데이터 저장
+        // setFishData(
+        //   {
+        //     "gardenEel": true,
+        //     "napoleonWrasse": false,
+        //     "arowana": true,
+        //     "blacktipReefShark": false,
+        //     "africanManatee": true,
+        //     "giantGrouper": false,
+        //     "smallClawedOtter": true,
+        //     "piranha": false,
+        //     "zebraShark": true,
+        //     "californiaSeaLion": true,
+        //     "clownfish": false,
+        //     "blackStingray": true,
+        //     "leatherbackSeaTurtle": false,
+        //     "humboldtPenguin": true
+        //   }
+        // )
       } catch (error) {
         console.error("물고기 데이터를 가져오는 중 오류가 발생했습니다:", error);
       }
     };
-      
-    fetchFishData();  
+
+    fetchFishData();
   }, []);
 
   return (
