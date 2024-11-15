@@ -76,7 +76,7 @@ const NotFound = () => {
           분석된 물고기가 없어요 😢
         </Text>
         <Button
-          onClick={() => navigate("/capture")}
+          onClick={() => navigate("/camera")}
           colorScheme="blue"
           variant="outline"
           background={"white"}

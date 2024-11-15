@@ -12,7 +12,6 @@ import NextButton from "../../components/NextButton.tsx";
 import CheckDuplicateEmail from "../../components/CheckDuplicateEmail.tsx";
 import { useNavigate } from "react-router-dom";
 import start_img from "../../assets/start_img.svg";
-import { API_BASE_URL } from "../../api/constant.ts";
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,16 +23,20 @@ const SignupPage: React.FC = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post(`/api/v1/user/signup`, {
-        email,
-        nickName,
-        password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        }});
-      
+      const response = await axios.post(
+        `/api/v1/user/signup`,
+        {
+          email,
+          nickName,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       if (response.status === 200) {
         toast({
           title: "회원가입이 완료되었습니다",
@@ -47,13 +50,25 @@ const SignupPage: React.FC = () => {
         }, 1300);
       }
     } catch (error) {
-      toast({
-        title: "회원가입에 실패했습니다",
-        description: error.response?.data?.message || "다시 시도해주세요",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      if (axios.isAxiosError(error)) {
+        // error가 AxiosError 타입일 때만 접근
+        toast({
+          title: "회원가입에 실패했습니다",
+          description: error.response?.data?.message || "다시 시도해주세요",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        // 일반적인 오류 처리
+        toast({
+          title: "회원가입에 실패했습니다",
+          description: "알 수 없는 오류가 발생했습니다.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 
@@ -89,21 +104,51 @@ const SignupPage: React.FC = () => {
         animation={`${swimAnimation} 10s linear infinite reverse`}
         opacity={0.8}
       />
-      <Flex zIndex="10" position="relative" mt="80px" justifyContent="center" alignItems="center" flexDirection="column">
-        <Text fontSize="4xl" color="#152972">물</Text>
-        <Text fontSize="4xl" color="#152972">멍</Text>
+      <Flex
+        zIndex="10"
+        position="relative"
+        mt="80px"
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
+      >
+        <Text fontSize="4xl" color="#152972">
+          물
+        </Text>
+        <Text fontSize="4xl" color="#152972">
+          멍
+        </Text>
       </Flex>
-      
+
       <Flex width="100%" flexDirection="column" alignItems="center">
-        <CheckDuplicateEmail value={email} text="이메일" handleChange={handleChangeEmail} placeholder="이메일을 입력해주세요." />
-        <PasswordInput value={password} text="비밀번호" handleChange={handleChangePw} placeholder="비밀번호를 입력해주세요." />
-        <WhiteInput value={nickName} text="닉네임" handleChange={handleChangeName} placeholder="닉네임을 입력해주세요." />
+        <CheckDuplicateEmail
+          value={email}
+          text="이메일"
+          handleChange={handleChangeEmail}
+          placeholder="이메일을 입력해주세요."
+        />
+        <PasswordInput
+          value={password}
+          text="비밀번호"
+          handleChange={handleChangePw}
+          placeholder="비밀번호를 입력해주세요."
+        />
+        <WhiteInput
+          value={nickName}
+          text="닉네임"
+          handleChange={handleChangeName}
+          placeholder="닉네임을 입력해주세요."
+        />
       </Flex>
-      
+
       <NextButton onClick={handleSignup}>가입하기</NextButton>
 
       {/* 화면 밖에서 시작해 오른쪽으로 지나가는 애니메이션 */}
-      <AnimatedFish src={start_img} alt="fish" className={animate ? "animate-in" : ""} />
+      <AnimatedFish
+        src={start_img}
+        alt="fish"
+        className={animate ? "animate-in" : ""}
+      />
     </Wrapper>
   );
 };
@@ -127,7 +172,7 @@ const AnimatedFish = styled.img`
   z-index: 5;
   animation: ${floatAnimation} 3s ease-in-out infinite; /* 둥둥 떠있는 애니메이션 */
   &.animate-in {
-    animation: ${slideInOutAnimation} 3s ease-in-out forwards;  
+    animation: ${slideInOutAnimation} 3s ease-in-out forwards;
   }
 `;
 

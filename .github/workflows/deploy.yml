@@ -1,58 +1,67 @@
-name: S3 deploy
+name: Deploy
+
+
 
 on:
+
   push:
-    branches: ['main'] # main으로 push되었을 때 실행
-env:
-  AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: mulmung
-permissions:
-  contents: read
+
+    branches: ['main']
+
+
 
 jobs:
-  deploy:
-    name: Deploy
+
+  build:
+
     runs-on: ubuntu-latest
+
+    container: pandoc/latex
+
     steps:
-      - name: Checkout source code.
-        uses: actions/checkout@master
 
-      - name: Cache node modules
-        uses: actions/cache@v4
+      - uses: actions/checkout@v3
+
+
+
+      - name: Install mustache (to update the date)
+
+        run: apk add ruby && gem install mustache
+
+
+
+      - name: creates output
+
+        run: sh ./build.sh
+
+
+
+      - name: Pushes to another repository
+
+        id: push_directory
+
+        uses: cpina/github-action-push-to-another-repository@main
+
+        env:
+
+          API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
+
         with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
 
-      - name: Install pnpm # package manager 설치
-        run: |
-          npm install -g pnpm
+          source-directory: 'output'
 
-      - name: Create .env file # 환경변수 넣기
-        run: |
-          echo "VITE_APP_BASE_URL=${{ secrets.VITE_APP_BASE_URL }}" >> .env
+          destination-github-username: gogumalatte
 
-      - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile --force
+          destination-repository-name: gdgline-FE
 
-      - name: Lint Code # ESLint 실행하기
-        run: pnpm lint
+          user-email: ${{ secrets.EMAIL }}
 
-      - name: Build # Build 실행하기
-        run: CI='' pnpm run build
+          commit-message: ${{ github.event.commits[0].message }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          target-branch: main
 
-      - name: Upload to AWS S3
-        run: |
-          aws s3 cp \
-            --recursive \
-            --region ap-northeast-2 \
-            ./dist s3://${{env.S3_BUCKET_NAME}}
+
+
+      - name: Test get variable exported by push-to-another-repository
+
+        run: echo $DESTINATION_CLONED_DIRECTORY
