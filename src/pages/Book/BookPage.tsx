@@ -44,7 +44,7 @@ const bounceAnimation = keyframes`
 
 const BookPage = () => {
   const totalCards = MARINE_LIFE.length;
-  const discoveredCards = 7;
+  const discoveredCards = 14;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedMarineLife, setSelectedMarineLife] =
     useState<MarineLife | null>(null);
