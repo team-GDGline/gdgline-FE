@@ -123,12 +123,12 @@ const CameraPage: React.FC = () => {
     setLoading(true); // 로딩 상태 활성화
     try {
       // 1단계: AI API로 이미지 전송
-      const aiResponse = await axios.post("/ai/analyze", {
+      const aiResponse = await axios.post("34.64.216.227:8080", {
         image: capturedImage,
       });
-      const fishData = aiResponse.data.fishInfo;
+      const detections = aiResponse.data;
 
-      if (!fishData || fishData.length === 0) {
+      if (!detections || detections.length === 0) {
         setLoading(false);
         navigate("/notfound");
         return;
@@ -137,7 +137,7 @@ const CameraPage: React.FC = () => {
       // 2단계: 물고기 데이터 백엔드로 전송
       const backendResponse = await axios.post(
         "/api/v1/pokedex/update",
-        { caughtPokemons: fishData },
+        { caughtPokemons: detections },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`, // 인증 토큰
