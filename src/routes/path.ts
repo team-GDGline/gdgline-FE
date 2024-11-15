@@ -2,7 +2,7 @@ export const RouterPath = {
   root: "/",
   start: "/",
   login: "/login",
-  signup: "/singup",
+  signup: "/signup",
   main: "/main",
   book: "/book",
   loading: "/loading",
