@@ -94,6 +94,7 @@ const CameraPage: React.FC = () => {
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imageData = canvas.toDataURL("image/png");
+        console.log("Image Captured:", imageData); // 로그 추가
         setCapturedImage(imageData);
         stopCamera();
       }
