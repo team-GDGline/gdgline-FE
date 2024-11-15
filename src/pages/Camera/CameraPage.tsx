@@ -2,17 +2,20 @@ import React, { useRef, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "../../components/icons/HomeIcon";
-import { Button, IconButton } from "@chakra-ui/react";
+import { Button, IconButton, useToast } from "@chakra-ui/react";
 import { CameraIcon } from "lucide-react";
+import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const CameraPage: React.FC = () => {
     const navigate = useNavigate();
+    const toast = useToast();
     const [isCameraActive, setIsCameraActive] = useState(false);
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false); // 로딩 상태 추가
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    // 페이지 로드 시 카메라 시작
     useEffect(() => {
         startCamera();
         return () => stopCamera(); // 페이지 떠날 때 카메라 정지
@@ -42,21 +45,62 @@ const CameraPage: React.FC = () => {
             const video = videoRef.current;
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-
-            // 현재 비디오 프레임을 캔버스에 그리기
             const context = canvas.getContext("2d");
             if (context) {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                // 캔버스 내용을 base64 형식으로 변환하여 이미지 데이터 저장
                 const imageData = canvas.toDataURL("image/png");
                 setCapturedImage(imageData);
             }
         }
     };
-
     const stopAndCapture = () => {
         captureImage();
         stopCamera();
+    };
+
+    const analyzeImage = async () => {
+        if (!capturedImage) {
+            toast({
+                title: "분석할 이미지가 없습니다.",
+                status: "warning",
+                duration: 2000,
+                isClosable: true,
+            });
+            return;
+        }
+        setLoading(true); // 로딩 상태 활성화
+        try {
+            // 1단계: AI API로 이미지 전송
+            const aiResponse = await axios.post("/ai/analyze", { image: capturedImage });
+            const fishData = aiResponse.data.fishInfo;
+
+            if (!fishData || fishData.length === 0) {
+                setLoading(false);
+                navigate("/notfound");
+                return;
+            }
+
+            // 2단계: 물고기 데이터 백엔드로 전송
+            const backendResponse = await axios.post(
+                "/api/v1/pokedex/update",
+                { caughtPokemons: fishData },
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            // 3단계: 분석 페이지로 이동
+            const { pokemonStatus } = backendResponse.data;
+            navigate("/analysis", { state: { pokemonStatus } });
+        } catch (error) {
+            toast({
+                title: "분석 실패",
+                description: "다시 시도해주세요.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        } finally {
+            setLoading(false); // 로딩 상태 비활성화
+        }
     };
 
     return (
@@ -73,59 +117,58 @@ const CameraPage: React.FC = () => {
                 left="0"
                 zIndex="10"
             />
-            {/* <MainFish src={start_img} alt="fish" />*/}
-           
 
             <CameraWrapper>
-                <video ref={videoRef} autoPlay style={{ width: "100%", height: "90%", marginTop: "0px", display: isCameraActive ? "block" : "none", objectFit: "cover"}} />
-
-                {/* 사진 캡처 버튼 */}
-                {isCameraActive && (
-                    <Button onClick={stopAndCapture} mt='40px' mb="10px" borderRadius="50%" bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)">
-                        <CameraIcon size="40" />
-                    </Button>
-                )}
-
-                {/* 캡처된 사진 미리보기 및 하단 버튼 */}
-                {!isCameraActive && (
+                {loading ? (
+                    <LoadingSpinner /> // 로딩 중일 때 LoadingSpinner 표시
+                ) : (
                     <>
-                        <img src={capturedImage || ""} alt="캡처된 이미지" style={{ width: "100%", height: "90%", marginTop: "0px",  objectFit: "cover" }} />
-                        
-                        {/* 다시 찍기 버튼 */}
-                        <BottomButton
-                            onClick={startCamera}
-                            isPrimary
-                            mt="10px"
-                            mb="10px"
-                            borderRadius="50%"
-                            bg="white"
-                            border="1px solid black"
-                            color="black"
-                            w={16}
-                            h={16}
-                            boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)"
-                        >
-                            다시 찍기
-                        </BottomButton>
+                        <video ref={videoRef} autoPlay style={{ width: "100%", height: "90%", display: isCameraActive ? "block" : "none", objectFit: "cover"}} />
 
-                        {/* 분석하기 버튼 */}
-                        <BottomButton
-                            mt="10px"
-                            mb="10px"
-                            borderRadius="50%"
-                            bg="white"
-                            border="1px solid black"
-                            color="black"
-                            w={16}
-                            h={16}
-                            boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)"
-                        >
-                            분석하기
-                        </BottomButton>
+                        {isCameraActive && (
+                            <Button onClick={stopAndCapture} mt='40px' mb="10px" borderRadius="50%" bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)">
+                                <CameraIcon size="40" />
+                            </Button>
+                        )}
+
+                        {!isCameraActive && (
+                            <>
+                                <img src={capturedImage || ""} alt="캡처된 이미지" style={{ width: "100%", height: "90%", objectFit: "cover" }} />
+
+                                <BottomButton
+                                    onClick={startCamera}
+                                    isPrimary
+                                    mt="10px"
+                                    mb="10px"
+                                    borderRadius="50%"
+                                    bg="white"
+                                    border="1px solid black"
+                                    color="black"
+                                    w={16}
+                                    h={16}
+                                    boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)"
+                                >
+                                    다시 찍기
+                                </BottomButton>
+
+                                <BottomButton
+                                    onClick={analyzeImage}
+                                    mt="10px"
+                                    mb="10px"
+                                    borderRadius="50%"
+                                    bg="white"
+                                    border="1px solid black"
+                                    color="black"
+                                    w={16}
+                                    h={16}
+                                    boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)"
+                                >
+                                    분석하기
+                                </BottomButton>
+                            </>
+                        )}
                     </>
                 )}
-
-                {/* 캡처를 위한 캔버스 (보이지 않게 숨김) */}
                 <canvas ref={canvasRef} style={{ display: "none" }} />
             </CameraWrapper>
         </Wrapper>
@@ -144,11 +187,6 @@ const Wrapper = styled.div`
     align-items: center;
 `;
 
-const MainFish = styled.img`
-    margin-top: 40px;
-    width: 200px;
-`;
-
 const CameraWrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -156,7 +194,6 @@ const CameraWrapper = styled.div`
     height: 90%;
 `;
 
-// styled-component에서 props를 받아 다른 스타일 적용
 interface BottomButtonProps {
     isPrimary?: boolean;
 }
@@ -167,7 +204,6 @@ const BottomButton = styled(Button)<BottomButtonProps>`
     width: 40%;
     height: 70px;
     font-weight: 300;
-    height: 40px;
     font-size: 24px;
     border-radius: 10px;
     border: none;
@@ -177,13 +213,8 @@ const BottomButton = styled(Button)<BottomButtonProps>`
     text-align: center;
     ${({ isPrimary }) =>
         isPrimary
-            ? `
-        left: 30px;
-    `
-            : `
-        right: 30px;
-    `}
-    
+            ? `left: 30px;`
+            : `right: 30px;`}
 
     &:hover {
         background-color: #C5EFFF;
@@ -191,7 +222,7 @@ const BottomButton = styled(Button)<BottomButtonProps>`
 
     &:active {
         background-color: #55CFFF;
-        transform: scale(0.95); /* 눌렀을 때 살짝 축소 효과 */
-        box-shadow: 0 0 20px rgba(85, 207, 255, 0.6); /* 번지는 효과 */
+        transform: scale(0.95);
+        box-shadow: 0 0 20px rgba(85, 207, 255, 0.6);
     }
 `;
