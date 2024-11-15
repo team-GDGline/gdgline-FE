@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
           duration: 3000,
           isClosable: true,
         });
-        const { accessToken } = response.data.accessToken;
+        const { accessToken } = response.data;
         localStorage.setItem("accessToken", accessToken);
         setAnimate(true); // 애니메이션 시작
         setTimeout(() => {

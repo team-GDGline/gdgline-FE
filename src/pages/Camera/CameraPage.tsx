@@ -6,12 +6,11 @@ import { Button, Flex, IconButton, useToast } from "@chakra-ui/react";
 import { CameraIcon, ImageIcon } from "lucide-react";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { ACCESS_TOKEN } from '../../api/constant';
 
 const CameraPage: React.FC = () => {
     const navigate = useNavigate();
     const toast = useToast();
-    const accessToken = 'your-access-token';
+    const accessToken =  localStorage.getItem("accessToken");
     const [isCameraActive, setIsCameraActive] = useState(false);
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
