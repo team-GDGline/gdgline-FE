@@ -1,33 +1,13 @@
 // App.tsx
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./styles/theme";
-import { BubbleContainer } from "./components/Bubble/BubbleContainer";
-import { Bubble } from "./components/Bubble/Bubble";
 import { Wrapper } from "./components/Wrapper";
 import { Routes } from "./routes/Routes";
-import { useBubbles } from "./components/Bubble/useBubbles";
 
 const App = () => {
-  const bubbles = useBubbles();
-
   return (
     <ChakraProvider theme={theme}>
       <PageContainer>
-        <BubbleContainer>
-          {bubbles.map((bubble) => (
-            <Bubble
-              key={bubble.id}
-              style={{
-                left: `${bubble.left}%`,
-                bottom: `${bubble.bottom}%`,
-                width: `${bubble.size}px`,
-                height: `${bubble.size}px`,
-                animationDuration: `${bubble.duration}s`,
-                animationDelay: `${bubble.delay}s`,
-              }}
-            />
-          ))}
-        </BubbleContainer>
         <Wrapper>
           <Routes />
         </Wrapper>
