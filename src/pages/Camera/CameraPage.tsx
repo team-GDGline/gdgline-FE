@@ -111,7 +111,21 @@ const CameraPage: React.FC = () => {
       reader.readAsDataURL(file); // 파일을 Base64 문자열로 변환
     }
   };
-
+  const convertToPng = (capturedImage: string) => {
+    const canvas = document.createElement("canvas");
+    const img = new Image();
+    img.src = capturedImage;
+    return new Promise<string>((resolve) => {
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const context = canvas.getContext("2d");
+        context?.drawImage(img, 0, 0);
+        const pngData = canvas.toDataURL("image/png");
+        resolve(pngData.replace(/^data:image\/png;base64,/, ""));
+      };
+    });
+  };
   const analyzeImage = async () => {
     if (!capturedImage) {
       toast({
@@ -122,13 +136,13 @@ const CameraPage: React.FC = () => {
       });
       return;
     }
-    const base64Image = capturedImage?.replace(/^data:image\/png;base64,/, '');
-    console.log(base64Image);
+  
+    const pngBase64 = await convertToPng(capturedImage);
     setLoading(true); // 로딩 상태 활성화
     try {
       // 1단계: AI API로 이미지 전송
       const aiResponse = await axios.post("http://34.64.216.227:8080", {
-        image: base64Image,
+        image: pngBase64,
       });
       const { detections } = aiResponse.data;
 
