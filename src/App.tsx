@@ -1,10 +1,9 @@
 // App.tsx
-import { useEffect } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./styles/theme";
 import { Wrapper } from "./components/Wrapper";
 import { Routes } from "./routes/Routes";
-import { useLocation, useNavigate } from 'react-router-dom';
+
 
 const App = () => {
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import axios from "axios";
-
+import { API_BASE_URL } from "../../../api/constant";
 import background_aquarium from "../../../assets/background_aquarium.svg";
 import gardenEel from "../../../assets/pixel/gardenEel.svg";
 import napoleonWrasse from "../../../assets/pixel/napoleonWrasse.svg";
@@ -46,7 +46,7 @@ const Aquarium: React.FC<AquariumProps> = ({ children }) => {
   useEffect(() => {
     const fetchFishData = async () => {
       try {
-        const response = await axios.get(`/api/v1/pokedex`,
+        const response = await axios.get(`${API_BASE_URL}/api/v1/pokedex`,
         {    headers: {
           Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
         },

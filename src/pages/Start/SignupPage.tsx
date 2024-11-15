@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { Flex, Text, keyframes, Box, useToast } from "@chakra-ui/react";
 import axios from "axios";
+import { API_BASE_URL } from "../../api/constant.ts";
 import background_sea from "../../assets/background_sea.svg";
 import background_sea_phone from "../../assets/background_sea_phone.svg";
 import backgroundFish1 from "../../assets/background_fish1.svg";
@@ -24,7 +25,7 @@ const SignupPage: React.FC = () => {
   const handleSignup = async () => {
     try {
       const response = await axios.post(
-        `/api/v1/user/signup`,
+        `${API_BASE_URL}}/api/v1/user/signup`,
         {
           email,
           nickName,

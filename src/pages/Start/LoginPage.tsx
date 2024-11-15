@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { Flex, Text, keyframes, Box, useToast } from "@chakra-ui/react";
 import axios from "axios";
+import { API_BASE_URL } from "../../api/constant.ts";
 import background_sea from "../../assets/background_sea.svg";
 import background_sea_phone from "../../assets/background_sea_phone.svg";
 import backgroundFish1 from "../../assets/background_fish1.svg";
@@ -11,7 +12,6 @@ import PasswordInput from "../../components/PasswordInput.tsx";
 import NextButton from "../../components/NextButton.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import start_img from "../../assets/start_img.svg";
-import { API_BASE_URL } from "../../api/constant.ts";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
