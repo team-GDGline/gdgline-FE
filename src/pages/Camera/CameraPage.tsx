@@ -6,10 +6,12 @@ import { Button, Flex, IconButton, useToast } from "@chakra-ui/react";
 import { CameraIcon, ImageIcon } from "lucide-react";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { ACCESS_TOKEN } from '../../api/constant';
 
 const CameraPage: React.FC = () => {
     const navigate = useNavigate();
     const toast = useToast();
+    const accessToken = 'your-access-token';
     const [isCameraActive, setIsCameraActive] = useState(false);
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -93,7 +95,11 @@ const CameraPage: React.FC = () => {
             const backendResponse = await axios.post(
                 "/api/v1/pokedex/update",
                 { caughtPokemons: fishData },
-                { headers: { "Content-Type": "application/json" } }
+                { headers:
+                    {
+                    "Authorization": `Bearer ${accessToken}`, // 인증 토큰 
+                    "Content-Type": "application/json" } }
+                
             );
 
             // 3단계: 분석 페이지로 이동
