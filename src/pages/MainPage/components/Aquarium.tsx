@@ -47,7 +47,7 @@ const Aquarium: React.FC<AquariumProps> = ({ children }) => {
   useEffect(() => {
     const fetchFishData = async () => {
       try {
-        // const response = await axios.get(`${API_BASE_URL}/api/v1/pokedex`,
+        // const response = await axios.get(`/api/v1/pokedex`,
       //   {    headers: {
       //     Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
       //   },

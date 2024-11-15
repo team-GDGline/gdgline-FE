@@ -24,7 +24,7 @@ const SignupPage: React.FC = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/v1/user/signup`, {
+      const response = await axios.post(`/api/v1/user/signup`, {
         email,
         nickName,
         password,
