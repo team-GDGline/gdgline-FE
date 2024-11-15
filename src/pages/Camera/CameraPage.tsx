@@ -6,6 +6,7 @@ import { Button, Flex, IconButton, useToast } from "@chakra-ui/react";
 import { CameraIcon, ImageIcon, SwitchCameraIcon } from "lucide-react";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { API_BASE_URL } from "../../api/constant";
 
 const CameraPage: React.FC = () => {
   const navigate = useNavigate();
@@ -123,7 +124,7 @@ const CameraPage: React.FC = () => {
     setLoading(true); // 로딩 상태 활성화
     try {
       // 1단계: AI API로 이미지 전송
-      const aiResponse = await axios.post("34.64.216.227:8080", {
+      const aiResponse = await axios.post("http://34.64.216.227:8080", {
         image: capturedImage,
       });
       const detections = aiResponse.data;
@@ -136,7 +137,7 @@ const CameraPage: React.FC = () => {
 
       // 2단계: 물고기 데이터 백엔드로 전송
       const backendResponse = await axios.post(
-        "/api/v1/pokedex/update",
+        `${API_BASE_URL}/api/v1/pokedex/update`,
         { caughtPokemons: detections },
         {
           headers: {
