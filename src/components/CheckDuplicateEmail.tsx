@@ -15,7 +15,7 @@ const CheckDuplicateEmail: React.FC<CheckDEProps> = ({ value, text, handleChange
 
     const checkEmail = async () => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/api/v1/user/email/${value}`);
+            const response = await axios.get(`/api/v1/user/email/${value}`);
             if (response.data) {
                 toast({
                     title: "가입 가능한 이메일입니다.",
