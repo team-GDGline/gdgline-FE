@@ -56,6 +56,8 @@ const CheckDuplicateEmail: React.FC<CheckDEProps> = ({ value, text, handleChange
                     borderRadius="10px"
                     backgroundColor="white"
                     mb="24px"
+                    _hover={{ backgroundColor: "white" }} // Keeps the background white on hover
+                    _focus={{ backgroundColor: "white", boxShadow: "none" }} // Keeps the background white on focus
                 />
                 <Button
                     w="60px"
