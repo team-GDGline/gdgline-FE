@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { Flex, Text, keyframes, Box, useToast } from "@chakra-ui/react";
 import axios from "axios";
+import { API_BASE_URL } from "../../api/constant.ts";
 import background_sea from "../../assets/background_sea.svg";
 import background_sea_phone from "../../assets/background_sea_phone.svg";
 import backgroundFish1 from "../../assets/background_fish1.svg";
@@ -22,7 +23,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async () => {
     try {
       // POST 요청
-      const response = await axios.post(`/api/v1/user/login`, {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/user/login`, {
         email,
         password,
       });
@@ -35,8 +36,10 @@ const LoginPage: React.FC = () => {
           duration: 3000,
           isClosable: true,
         });
-        const { accessToken } = response.data.accessToken;
+        const { accessToken } = response.data;
+        const { nickName } = response.data;
         localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("nickName", nickName);
         setAnimate(true); // 애니메이션 시작
         setTimeout(() => {
           navigate("/main"); // 메인 페이지로 이동

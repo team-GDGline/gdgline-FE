@@ -1,6 +1,8 @@
 import { Input, Text, Button, useToast } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import axios from "axios";
+import { API_BASE_URL } from "../api/constant";
+
 interface CheckDEProps {
   value: string;
   text: string;
@@ -18,7 +20,7 @@ const CheckDuplicateEmail: React.FC<CheckDEProps> = ({
 
   const checkEmail = async () => {
     try {
-      const response = await axios.get(`/api/v1/user/email/${value}`);
+      const response = await axios.get(`${API_BASE_URL}/api/v1/user/email/${value}`);
       if (response.data) {
         toast({
           title: "가입 가능한 이메일입니다.",

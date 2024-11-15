@@ -4,7 +4,10 @@ import theme from "./styles/theme";
 import { Wrapper } from "./components/Wrapper";
 import { Routes } from "./routes/Routes";
 
+
 const App = () => {
+
+ 
   return (
     <ChakraProvider theme={theme}>
       <PageContainer>
