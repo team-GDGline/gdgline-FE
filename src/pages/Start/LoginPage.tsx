@@ -11,6 +11,7 @@ import PasswordInput from "../../components/PasswordInput.tsx";
 import NextButton from "../../components/NextButton.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import start_img from "../../assets/start_img.svg";
+import { API_BASE_URL } from "../../api/constant.ts";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async () => {
     try {
       // POST 요청
-      const response = await axios.post(`/api/v1/user/login`, {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/user/login`, {
         email,
         password,
       });
@@ -36,7 +37,9 @@ const LoginPage: React.FC = () => {
           isClosable: true,
         });
         const { accessToken } = response.data;
+        const { nickName } = response.data;
         localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("nickName", nickName);
         setAnimate(true); // 애니메이션 시작
         setTimeout(() => {
           navigate("/main"); // 메인 페이지로 이동

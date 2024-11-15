@@ -19,7 +19,7 @@ import fishIcon from "../../assets/fishIcon.svg";
 import Aquarium from "./components/Aquarium";
 
 const MainPage: React.FC = () => {
-  const [nickname] = useState('고희연')
+  const nickName = localStorage.getItem("nickName");
   const navigate = useNavigate();
   const goCamera = () =>
   {
@@ -44,7 +44,7 @@ const MainPage: React.FC = () => {
               _hover={{ bg: "transparent" }}
               _disabled={{ opacity: 1, cursor: "default" }}
             >
-              {nickname} 님
+              {nickName} 님
             </MenuItem>
             <MenuItem icon={<LogOutIcon size="20" />}>로그아웃</MenuItem>
             <MenuItem icon={<Trash2Icon size="20" />}>회원 탈퇴</MenuItem>
