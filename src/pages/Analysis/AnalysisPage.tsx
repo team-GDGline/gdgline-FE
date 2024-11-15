@@ -45,15 +45,6 @@ const AnalysisPage = () => {
     null
   );
 
-  //const mockData = {
-  //  pokemonStatus: {
-  //    gardenEel: "new",
-  //    clownfish: "old",
-  //    piranha: "old",
-  //    californiaSeaLion: "old",
-  //  },
-  //};
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "CR":
@@ -274,7 +265,7 @@ const AnalysisPage = () => {
         mt={20}
       >
         <Button
-          onClick={() => navigate("/capture")}
+          onClick={() => navigate("/camera")}
           colorScheme="blue"
           variant="outline"
           background={"white"}
