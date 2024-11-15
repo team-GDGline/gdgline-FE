@@ -10,13 +10,27 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 const CameraPage: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const accessToken = "your-access-token";
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null); // 파일 선택 input 참조
+  const accessToken = localStorage.getItem("accessToken");
+
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      })
+      .catch((err: unknown) => {
+        console.error("Camera access denied:", err);
+      });
+  }, []);
 
   useEffect(() => {
     startCamera();
