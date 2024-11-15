@@ -1,10 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainPage from "../pages/MainPage/MainPage"; // 메인 페이지 컴포넌트 가져오기
 import StartPage from "../pages/Start/StartPage";
-import BookPage from "../pages/book/BookPage";
+import LoginPage from "../pages/Start/LoginPage";
+import SignupPage from "../pages/Start/SignupPage";
+import BookPage from "../pages/Book/BookPage"; // 도감 컴포넌트 가져오기
 import LoadingPage from "../pages/LoadingPage/LoadingPage"; // 로딩 페이지 컴포넌트 가져오기/ 메인 페이지 컴포넌트 가져오기
 import AnalysisPage from "../pages/Analysis/AnalysisPage";
 import NotFoundPage from "../pages/NotFound/NotFoundPage";
+import CameraPage from "../pages/Camera/CameraPage";
 import { RouterPath } from "./path"; // 경로 상수 가져오기
 
 // 라우터 정의
@@ -15,6 +18,14 @@ const router = createBrowserRouter(
       element: <StartPage />,
     },
     {
+      path: RouterPath.login,
+      element: <LoginPage />,
+    },
+    {
+      path: RouterPath.signup,
+      element: <SignupPage/>,
+    },
+    { 
       path: RouterPath.main,
       element: <MainPage />,
     },
@@ -33,6 +44,10 @@ const router = createBrowserRouter(
     {
       path: RouterPath.notFound,
       element: <NotFoundPage />,
+    },
+    {
+      path: RouterPath.camera,
+      element: <CameraPage />,
     },
   ],
   {

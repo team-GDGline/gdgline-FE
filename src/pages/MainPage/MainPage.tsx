@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Flex,
   Text,
@@ -19,7 +19,12 @@ import fishIcon from "../../assets/fishIcon.svg";
 import Aquarium from "./components/Aquarium";
 
 const MainPage: React.FC = () => {
-  const [nickname] = useState("고희연");
+  const [nickname] = useState('고희연')
+  const navigate = useNavigate();
+  const goCamera = () =>
+  {
+    navigate("/camera")
+  };
   return (
     <Wrapper>
       <Flex width="100%" justifyContent="flex-end" p={1}>
@@ -66,6 +71,7 @@ const MainPage: React.FC = () => {
       <Aquarium></Aquarium>
       <BottomLayout>
         <Button
+          onClick={goCamera}
           mt="10px"
           mb="10px"
           borderRadius="50%"

@@ -16,7 +16,7 @@ const StartPage: React.FC = () => {
   const handleStartClick = () => {
     setAnimate(true); // 애니메이션 시작
     setTimeout(() => {
-      navigate("/main"); // 페이지 이동
+      navigate("/login"); // 페이지 이동
     }, 1200); // 애니메이션이 끝난 후 페이지 이동
   };
 
