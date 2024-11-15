@@ -2,8 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "../../components/icons/HomeIcon";
-import { Button, IconButton, useToast } from "@chakra-ui/react";
-import { CameraIcon } from "lucide-react";
+import { Button, Flex, IconButton, useToast } from "@chakra-ui/react";
+import { CameraIcon, ImageIcon } from "lucide-react";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
@@ -15,6 +15,7 @@ const CameraPage: React.FC = () => {
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null); // 파일 선택 input 참조
 
     useEffect(() => {
         startCamera();
@@ -52,6 +53,17 @@ const CameraPage: React.FC = () => {
                 setCapturedImage(imageData);
                 stopCamera();
             }
+        }
+    };
+    const handleGallerySelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]; // 사용자가 선택한 첫 번째 파일
+        if (file) {
+            const reader = new FileReader(); // FileReader를 사용해 파일 읽기
+            reader.onload = (e) => {
+                setCapturedImage(e.target?.result as string); // Base64로 변환된 이미지 저장
+                stopCamera(); // 갤러리 이미지를 선택하면 카메라 중지
+            };
+            reader.readAsDataURL(file); // 파일을 Base64 문자열로 변환
         }
     };
 
@@ -120,12 +132,21 @@ const CameraPage: React.FC = () => {
                     <LoadingSpinner /> // 로딩 중일 때 LoadingSpinner 표시
                 ) : (
                     <>
-                        <video ref={videoRef} autoPlay style={{ width: "100%", height: "90%", display: isCameraActive ? "block" : "none", objectFit: "cover"}} />
+                        <video ref={videoRef} autoPlay style={{ width: "100%", height: "90%", display: isCameraActive ? "block" : "none", objectFit: "cover" }} />
 
                         {isCameraActive && (
-                            <Button onClick={captureImage} mt='40px' mb="10px" borderRadius="50%" bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)">
-                                <CameraIcon size="40" />
-                            </Button>
+               <Flex alignItems="baseline" justifyContent="center" mt="40px" width="100%">
+               {/* 갤러리 버튼 (왼쪽 끝) */}
+               <GalleryButton onClick={() => fileInputRef.current?.click()} ml="20px">
+                   <ImageIcon size="40" />
+               </GalleryButton>
+           
+               {/* 카메라 버튼 (중앙) */}
+               <CameraButton onClick={captureImage}>
+                   <CameraIcon size="40" />
+               </CameraButton>
+           </Flex>
+           
                         )}
 
                         {!isCameraActive && (
@@ -166,6 +187,14 @@ const CameraPage: React.FC = () => {
                         )}
                     </>
                 )}
+                {/* 숨겨진 input */}
+                <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    onChange={handleGallerySelect}
+                />
                 <canvas ref={canvasRef} style={{ display: "none" }} />
             </CameraWrapper>
         </Wrapper>
@@ -195,7 +224,7 @@ interface BottomButtonProps {
     isPrimary?: boolean;
 }
 
-const BottomButton = styled(Button)<BottomButtonProps>`
+const BottomButton = styled(Button) <BottomButtonProps>`
     background-color: #FFFFFF;
     color: #05518F;
     width: 40%;
@@ -223,3 +252,64 @@ const BottomButton = styled(Button)<BottomButtonProps>`
         box-shadow: 0 0 20px rgba(85, 207, 255, 0.6);
     }
 `;
+
+const GalleryButton = styled(Button)`
+   background-color: #FFFFFF;
+    color: black;
+    width: 60px;
+    height: 60px;
+    font-weight: 300;
+    font-size: 24px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    left: 20px;
+    text-align: center;
+    &:hover {
+        background-color: #C5EFFF;
+    }
+
+    &:active {
+        background-color: #55CFFF;
+        transform: scale(0.95);
+        box-shadow: 0 0 20px rgba(85, 207, 255, 0.6);
+    }
+`;
+const CameraButton = styled(Button)`
+    background-color: #FFFFFF;
+    color: black;
+    width: 80px;
+    height: 80px;
+    font-weight: 300;
+    font-size: 24px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    bottom: 20px;
+    text-align: center;
+    &:hover {
+        background-color: #C5EFFF;
+    }
+
+    &:active {
+        background-color: #55CFFF;
+        transform: scale(0.95);
+        box-shadow: 0 0 20px rgba(85, 207, 255, 0.6);
+    }
+`;
+// const CameraButton = styled(Button)`
+//     border-radius: 50%;
+//     background-color: white;
+//     border: 1px solid black;
+//     width: 70px;
+//     height: 70px;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+//     &:hover {
+//         background-color: #f0f0f0;
+//     }
+// `;
