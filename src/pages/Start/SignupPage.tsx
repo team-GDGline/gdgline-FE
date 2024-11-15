@@ -1,120 +1,218 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "@emotion/styled";
-import { Flex, Text, keyframes, Box } from "@chakra-ui/react";
-import background_sea from "../../assets/background_sea.svg";
-import background_sea_phone from "../../assets/background_sea_phone.svg";
-import backgroundFish1 from "../../assets/background_fish1.svg";
-import backgroundFish2 from "../../assets/background_fish2.svg";
-import WhiteInput from "../../components/WhiteInput.tsx";
-import PasswordInput from "../../components/PasswordInput.tsx";
-import NextButton from "../../components/NextButton.tsx";
-import CheckDuplicateEmail from "../../components/CheckDuplicateEmail.tsx";
-import { Link, useNavigate } from "react-router-dom";
-import start_img from "../../assets/start_img.svg";
+import { useNavigate } from "react-router-dom";
+import HomeIcon from "../../components/icons/HomeIcon";
+import { Button, IconButton, useToast } from "@chakra-ui/react";
+import { CameraIcon } from "lucide-react";
+import axios from "axios";
+import { API_BASE_URL} from "../../api/constant.ts";
+const CameraPage: React.FC = () => {
+    const navigate = useNavigate();
+    const toast = useToast();
+    const [isCameraActive, setIsCameraActive] = useState(false);
+    const [capturedImage, setCapturedImage] = useState<string | null>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
-const SignupPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [animate, setAnimate] = useState(false);
+    useEffect(() => {
+        startCamera();
+        return () => stopCamera(); // 페이지 떠날 때 카메라 정지
+    }, []);
 
-  const handleSignup = () => {
-    setAnimate(true); 
-    setTimeout(() => {
-      navigate("/main"); 
-    }, 1300); 
-  };
+    const startCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                setIsCameraActive(true);
+            }
+        } catch (error) {
+            console.error("카메라 접근 오류:", error);
+        }
+    };
 
-  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-  const handleChangePw = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
-  };
+    const stopCamera = () => {
+        const stream = videoRef.current?.srcObject as MediaStream;
+        stream?.getTracks().forEach(track => track.stop());
+        setIsCameraActive(false);
+    };
 
-  return (
-    <Wrapper>
-      <Box
-        as="img"
-        src={backgroundFish1}
-        position="absolute"
-        top="20%"
-        left="0"
-        width="400px"
-        animation={`${swimAnimation} 10s linear infinite`}
-        opacity={0.9}
-      />
-      <Box
-        as="img"
-        src={backgroundFish2}
-        position="absolute"
-        top="50%"
-        right="0"
-        width="300px"
-        animation={`${swimAnimation} 10s linear infinite reverse`}
-        opacity={0.8}
-      />
-      <Flex zIndex="10" position="relative" mt="80px" justifyContent="center" alignItems="center" flexDirection="column">
-        <Text fontSize="4xl" color="#152972">물</Text>
-        <Text fontSize="4xl" color="#152972">멍</Text>
-      </Flex>
-      
-      <Flex width="100%" flexDirection="column" alignItems="center">
-        <CheckDuplicateEmail value={email} text="이메일" handleChange={handleChangeEmail} placeholder="이메일을 입력해주세요." />
-        <PasswordInput value={password} text="비밀번호" handleChange={handleChangePw} placeholder="비밀번호를 입력해주세요." />
-        <WhiteInput value={nickname} text="닉네임" handleChange={handleChangeName} placeholder="닉네임을 입력해주세요." />
-      </Flex>
-      
-      <NextButton onClick={handleSignup}>가입하기</NextButton>
+    const captureImage = () => {
+        if (videoRef.current && canvasRef.current) {
+            const canvas = canvasRef.current;
+            const video = videoRef.current;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext("2d");
+            if (context) {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL("image/png");
+                setCapturedImage(imageData);
+            }
+        }
+    };
 
-      {/* 화면 밖에서 시작해 오른쪽으로 지나가는 애니메이션 */}
-      <AnimatedFish src={start_img} alt="fish" className={animate ? "animate-in" : ""} />
-    </Wrapper>
-  );
+    const stopAndCapture = () => {
+        captureImage();
+        stopCamera();
+    };
+
+    const analyzeImage = async () => {
+        if (!capturedImage) {
+            toast({
+                title: "분석할 이미지가 없습니다.",
+                status: "warning",
+                duration: 2000,
+                isClosable: true,
+            });
+            return;
+        }
+        try {
+            // 1단계: AI API로 이미지 전송
+            const aiResponse = await axios.post("/ai/analyze", { image: capturedImage });
+            const fishData = aiResponse.data.fishInfo;
+
+            if (!fishData || fishData.length === 0) {
+                navigate("/notfound");
+                return;
+            }
+
+            // 2단계: 물고기 데이터 백엔드로 전송
+            const backendResponse = await axios.post(
+                `${API_BASE_URL}/api/v1/pokedex/update`,
+                { caughtPokemons: fishData },
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            // 3단계: 분석 페이지로 이동
+            const { pokemonStatus } = backendResponse.data;
+            navigate("/analysis", { state: { pokemonStatus } });
+        } catch (error) {
+            toast({
+                title: "분석 실패",
+                description: "다시 시도해주세요.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+    return (
+        <Wrapper>
+            <IconButton
+                icon={<HomeIcon boxSize="30px" />}
+                aria-label="홈으로 이동"
+                onClick={() => navigate("/main")}
+                variant="ghost"
+                _hover={{ bg: "transparent" }}
+                _active={{ bg: "transparent" }}
+                _focus={{ boxShadow: "none" }}
+                position="absolute"
+                left="0"
+                zIndex="10"
+            />
+
+            <CameraWrapper>
+                <video ref={videoRef} autoPlay style={{ width: "100%", height: "90%", display: isCameraActive ? "block" : "none", objectFit: "cover"}} />
+
+                {isCameraActive && (
+                    <Button onClick={stopAndCapture} mt='40px' mb="10px" borderRadius="50%" bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)">
+                        <CameraIcon size="40" />
+                    </Button>
+                )}
+
+                {!isCameraActive && (
+                    <>
+                        <img src={capturedImage || ""} alt="캡처된 이미지" style={{ width: "100%", height: "90%", objectFit: "cover" }} />
+
+                        <BottomButton
+                            onClick={startCamera}
+                            isPrimary
+                            mt="10px"
+                            mb="10px"
+                            borderRadius="50%"
+                            bg="white"
+                            border="1px solid black"
+                            color="black"
+                            w={16}
+                            h={16}
+                            boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)"
+                        >
+                            다시 찍기
+                        </BottomButton>
+
+                        <BottomButton
+                            onClick={analyzeImage}
+                            mt="10px"
+                            mb="10px"
+                            borderRadius="50%"
+                            bg="white"
+                            border="1px solid black"
+                            color="black"
+                            w={16}
+                            h={16}
+                            boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)"
+                        >
+                            분석하기
+                        </BottomButton>
+                    </>
+                )}
+
+                <canvas ref={canvasRef} style={{ display: "none" }} />
+            </CameraWrapper>
+        </Wrapper>
+    );
 };
 
-export default SignupPage;
-
-const floatAnimation = keyframes`
-  0%, 100% { transform: translateX(-300%); }
-`;
-// 천천히 나타나고 빠르게 사라지게 하는 애니메이션 정의
-const slideInOutAnimation = keyframes`
-  0% { transform: translateX(-300%); } 
-  50% { transform: translateX(20%); }   
-  100% { transform: translateX(300%); } 
-`;
-
-const AnimatedFish = styled.img`
-  width: 500px;
-  position: absolute;
-  top: 40%;
-  z-index: 5;
-  animation: ${floatAnimation} 3s ease-in-out infinite; /* 둥둥 떠있는 애니메이션 */
-  &.animate-in {
-    animation: ${slideInOutAnimation} 3s ease-in-out forwards;  
-  }
-`;
+export default CameraPage;
 
 const Wrapper = styled.div`
-  @media (min-width: 600px) {
-    background-image: url(${background_sea});
-  }
-  background-image: url(${background_sea_phone});
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
+    background-color: #E9F9FF;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
-const swimAnimation = keyframes`
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+const CameraWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 90%;
+`;
+
+interface BottomButtonProps {
+    isPrimary?: boolean;
+}
+
+const BottomButton = styled(Button)<BottomButtonProps>`
+    background-color: #FFFFFF;
+    color: #05518F;
+    width: 40%;
+    height: 70px;
+    font-weight: 300;
+    font-size: 24px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    bottom: 20px;
+    text-align: center;
+    ${({ isPrimary }) =>
+        isPrimary
+            ? `left: 30px;`
+            : `right: 30px;`}
+
+    &:hover {
+        background-color: #C5EFFF;
+    }
+
+    &:active {
+        background-color: #55CFFF;
+        transform: scale(0.95);
+        box-shadow: 0 0 20px rgba(85, 207, 255, 0.6);
+    }
 `;
