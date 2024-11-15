@@ -4,14 +4,6 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: {
-      "/api": {
-        target: "http://34.64.38.113:8080", // HTTP 서버 주소
-        changeOrigin: true,
-        secure: false, // HTTPS로 강제하지 않음
-        rewrite: (path) => path.replace(/^\/api/, ""), // '/api'를 제거하고 실제 API 엔드포인트로 요청 전달
-      },
-    },
     host: true, // 모든 네트워크 인터페이스에서 접근 가능
   },
   build: {
