@@ -121,6 +121,7 @@ const CameraPage: React.FC = () => {
       });
       return;
     }
+    console.log(capturedImage);
     setLoading(true); // 로딩 상태 활성화
     try {
       // 1단계: AI API로 이미지 전송
