@@ -129,7 +129,7 @@ const CameraPage: React.FC = () => {
       const aiResponse = await axios.post("http://34.64.216.227:8080", {
         image: capturedImage,
       });
-      const detections = aiResponse.data;
+      const { detections } = aiResponse.data;
 
       if (!detections || detections.length === 0) {
         setLoading(false);
