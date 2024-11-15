@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   base: "/", // 배포 경로를 '/'로 설정
   server: {
+    host: true, // 네트워크에서 접근 가능하도록 설정
     proxy: {
       "/api": {
         target: "http://34.64.38.113:8080", // 백엔드 API 서버 주소
