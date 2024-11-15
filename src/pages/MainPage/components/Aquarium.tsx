@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import axios from "axios";
 
 import background_aquarium from "../../../assets/background_aquarium.svg";
 import gardenEel from "../../../assets/pixel/gardenEel.svg";
@@ -18,23 +17,120 @@ import clownfish from "../../../assets/pixel/clownfish.svg";
 import blackStingray from "../../../assets/pixel/blackStingray.svg";
 import leatherbackSeaTurtle from "../../../assets/pixel/leatherbackSeaTurtle.svg";
 import humboldtPenguin from "../../../assets/pixel/humboldtPenguin.svg";
-import { API_BASE_URL } from "../../../api/constant";
 
 const fishPixel = [
-  { src: gardenEel, key: "gardenEel", top: "75%", left: "10%", width: "80px", height: "80px" },
-  { src: napoleonWrasse, key: "napoleonWrasse", top: "45%", left: "80%", width: "60px", height: "60px" },
-  { src: arowana, key: "arowana", top: "40%", left: "5%", width: "60px", height: "60px" },
-  { src: blacktipReefShark, key: "blacktipReefShark", top: "5%", left: "60%", width: "140px", height: "140px" },
-  { src: africanManatee, key: "africanManatee", top: "45%", left: "30%", width: "80px", height: "80px" },
-  { src: giantGrouper, key: "giantGrouper", top: "2%", left: "80%", width: "80px", height: "80px" },
-  { src: smallClawedOtter, key: "smallClawedOtter", top: "75%", left: "30%", width: "80px", height: "80px" },
-  { src: piranha, key: "piranha", top: "35%", left: "55%", width: "50px", height: "50px" },
-  { src: zebraShark, key: "zebraShark", top: "15%", left: "10%", width: "100px", height: "100px" },
-  { src: californiaSeaLion, key: "californiaSeaLion", top: "75%", left: "55%", width: "80px", height: "80px" },
-  { src: clownfish, key: "clownfish", top: "65%", left: "5%", width: "80px", height: "80px" },
-  { src: blackStingray, key: "blackStingray", top: "5%", left: "30%", width: "110px", height: "110px" },
-  { src: leatherbackSeaTurtle, key: "leatherbackSeaTurtle", top: "55%", left: "65%", width: "80px", height: "80px" },
-  { src: humboldtPenguin, key: "humboldtPenguin", top: "70%", left: "80%", width: "80px", height: "80px" },
+  {
+    src: gardenEel,
+    key: "gardenEel",
+    top: "75%",
+    left: "10%",
+    width: "80px",
+    height: "80px",
+  },
+  {
+    src: napoleonWrasse,
+    key: "napoleonWrasse",
+    top: "45%",
+    left: "80%",
+    width: "60px",
+    height: "60px",
+  },
+  {
+    src: arowana,
+    key: "arowana",
+    top: "40%",
+    left: "5%",
+    width: "60px",
+    height: "60px",
+  },
+  {
+    src: blacktipReefShark,
+    key: "blacktipReefShark",
+    top: "5%",
+    left: "60%",
+    width: "140px",
+    height: "140px",
+  },
+  {
+    src: africanManatee,
+    key: "africanManatee",
+    top: "45%",
+    left: "30%",
+    width: "80px",
+    height: "80px",
+  },
+  {
+    src: giantGrouper,
+    key: "giantGrouper",
+    top: "2%",
+    left: "80%",
+    width: "80px",
+    height: "80px",
+  },
+  {
+    src: smallClawedOtter,
+    key: "smallClawedOtter",
+    top: "75%",
+    left: "30%",
+    width: "80px",
+    height: "80px",
+  },
+  {
+    src: piranha,
+    key: "piranha",
+    top: "35%",
+    left: "55%",
+    width: "50px",
+    height: "50px",
+  },
+  {
+    src: zebraShark,
+    key: "zebraShark",
+    top: "15%",
+    left: "10%",
+    width: "100px",
+    height: "100px",
+  },
+  {
+    src: californiaSeaLion,
+    key: "californiaSeaLion",
+    top: "75%",
+    left: "55%",
+    width: "80px",
+    height: "80px",
+  },
+  {
+    src: clownfish,
+    key: "clownfish",
+    top: "65%",
+    left: "5%",
+    width: "80px",
+    height: "80px",
+  },
+  {
+    src: blackStingray,
+    key: "blackStingray",
+    top: "5%",
+    left: "30%",
+    width: "110px",
+    height: "110px",
+  },
+  {
+    src: leatherbackSeaTurtle,
+    key: "leatherbackSeaTurtle",
+    top: "55%",
+    left: "65%",
+    width: "80px",
+    height: "80px",
+  },
+  {
+    src: humboldtPenguin,
+    key: "humboldtPenguin",
+    top: "70%",
+    left: "80%",
+    width: "80px",
+    height: "80px",
+  },
 ];
 
 interface AquariumProps {
@@ -43,36 +139,36 @@ interface AquariumProps {
 
 const Aquarium: React.FC<AquariumProps> = ({ children }) => {
   const [fishData, setFishData] = useState<Record<string, boolean>>({});
-  const accessToken = 'your-access-token'; // 실제 토큰 값을 여기에 설정하세요.
   useEffect(() => {
     const fetchFishData = async () => {
       try {
         // const response = await axios.get(`/api/v1/pokedex`,
-      //   {    headers: {
-      //     Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
-      //   },
-      // });
+        //   {    headers: {
+        //     Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
+        //   },
+        // });
         // setFishData(response.data); // 물고기 데이터 저장
-        setFishData(
-          {
-            "gardenEel": true,
-            "napoleonWrasse": false,
-            "arowana": true,
-            "blacktipReefShark": false,
-            "africanManatee": true,
-            "giantGrouper": false,
-            "smallClawedOtter": true,
-            "piranha": false,
-            "zebraShark": true,
-            "californiaSeaLion": true,
-            "clownfish": false,
-            "blackStingray": true,
-            "leatherbackSeaTurtle": false,
-            "humboldtPenguin": true
-          }
-        )
+        setFishData({
+          gardenEel: true,
+          napoleonWrasse: false,
+          arowana: true,
+          blacktipReefShark: false,
+          africanManatee: true,
+          giantGrouper: false,
+          smallClawedOtter: true,
+          piranha: false,
+          zebraShark: true,
+          californiaSeaLion: true,
+          clownfish: false,
+          blackStingray: true,
+          leatherbackSeaTurtle: false,
+          humboldtPenguin: true,
+        });
       } catch (error) {
-        console.error("물고기 데이터를 가져오는 중 오류가 발생했습니다:", error);
+        console.error(
+          "물고기 데이터를 가져오는 중 오류가 발생했습니다:",
+          error
+        );
       }
     };
 
@@ -85,7 +181,7 @@ const Aquarium: React.FC<AquariumProps> = ({ children }) => {
         if (!value) return null; // 잡히지 않은 물고기는 표시하지 않음
 
         // 잡힌 물고기의 정보를 fishPixel 배열에서 찾음
-        const fishInfo = fishPixel.find(fish => fish.key === key);
+        const fishInfo = fishPixel.find((fish) => fish.key === key);
         if (!fishInfo) return null;
 
         return (
@@ -127,6 +223,7 @@ const floatAnimation = (x: number, y: number) => keyframes`
 const FishPixel = styled.img`
   position: absolute;
   animation: ${() =>
-    floatAnimation(Math.random() * 20 - 10, Math.random() * 20 - 10)} 3s ease-in-out infinite;
+      floatAnimation(Math.random() * 20 - 10, Math.random() * 20 - 10)}
+    3s ease-in-out infinite;
   image-rendering: pixelated;
 `;
