@@ -50,12 +50,9 @@ const CameraPage: React.FC = () => {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const imageData = canvas.toDataURL("image/png");
                 setCapturedImage(imageData);
+                stopCamera();
             }
         }
-    };
-    const stopAndCapture = () => {
-        captureImage();
-        stopCamera();
     };
 
     const analyzeImage = async () => {
@@ -126,7 +123,7 @@ const CameraPage: React.FC = () => {
                         <video ref={videoRef} autoPlay style={{ width: "100%", height: "90%", display: isCameraActive ? "block" : "none", objectFit: "cover"}} />
 
                         {isCameraActive && (
-                            <Button onClick={stopAndCapture} mt='40px' mb="10px" borderRadius="50%" bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)">
+                            <Button onClick={captureImage} mt='40px' mb="10px" borderRadius="50%" bg='white' border="1px solid black" color='black' w={16} h={16} boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)">
                                 <CameraIcon size="40" />
                             </Button>
                         )}
