@@ -122,12 +122,13 @@ const CameraPage: React.FC = () => {
       });
       return;
     }
-    console.log(capturedImage);
+    const base64Image = capturedImage?.replace(/^data:image\/png;base64,/, '');
+    console.log(base64Image);
     setLoading(true); // 로딩 상태 활성화
     try {
       // 1단계: AI API로 이미지 전송
       const aiResponse = await axios.post("http://34.64.216.227:8080", {
-        image: capturedImage,
+        image: base64Image,
       });
       const { detections } = aiResponse.data;
 
