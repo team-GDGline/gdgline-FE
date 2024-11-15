@@ -44,37 +44,28 @@ interface AquariumProps {
 
 const Aquarium: React.FC<AquariumProps> = ({ children }) => {
   const [fishData, setFishData] = useState<Record<string, boolean>>({});
-
+  const accessToken = localStorage.getItem("accessToken");
   useEffect(() => {
     const fetchFishData = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/v1/pokedex`);
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/pokedex`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`, // 인증 토큰 추가
+              "Content-Type": "application/json",
+            },
+          }
+        );
         setFishData(response.data); // 물고기 데이터 저장
-        // setFishData(
-        //   {
-        //     "gardenEel": true,
-        //     "napoleonWrasse": false,
-        //     "arowana": true,
-        //     "blacktipReefShark": false,
-        //     "africanManatee": true,
-        //     "giantGrouper": false,
-        //     "smallClawedOtter": true,
-        //     "piranha": false,
-        //     "zebraShark": true,
-        //     "californiaSeaLion": true,
-        //     "clownfish": false,
-        //     "blackStingray": true,
-        //     "leatherbackSeaTurtle": false,
-        //     "humboldtPenguin": true
-        //   }
-        // )
       } catch (error) {
         console.error("물고기 데이터를 가져오는 중 오류가 발생했습니다:", error);
       }
     };
-
+  
     fetchFishData();
   }, []);
+  
 
   return (
     <AquariumWrapper>
